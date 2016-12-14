@@ -7,6 +7,7 @@ GLint winWidth = 800;
 GLint winHeight = 600;
 
 typedef struct point3dh { GLdouble x, y, z, h; } POINT3DH;
+typedef struct point2d { GLdouble x, y; } POINT2D;
 GLdouble eltol1[4][4];
 GLdouble eltol2[4][4];
 GLdouble forgaty1[4][4];
@@ -34,7 +35,9 @@ GLdouble temp6_1[4][4];
 GLdouble temp6_2[4][4];
 GLdouble VC[4][4];
 GLdouble VM[4][4];
-GLint s = 3;
+GLdouble WtV1[4][4];
+GLdouble WtV2[4][4];
+GLdouble s = 3;
 POINT3DH Q[8];
 POINT3DH W[8];
 POINT3DH E[8];
@@ -51,7 +54,7 @@ GLdouble szogx = 24 * 0.0174532925;
 GLdouble szogy1 = 24 * 0.0174532925;
 GLdouble szogy2 = 24 * 0.0174532925;
 GLdouble szogy3 = 24 * 0.0174532925;
-GLdouble delta = 5 * 0.0174532925;
+GLdouble delta = 5 * 0.0174532925; 
 
 POINT3DH initPoint3dh(GLdouble x , GLdouble y , GLdouble z){
 POINT3DH P;
@@ -61,6 +64,20 @@ P.z = z;
 P.h = 1;
 return P;
 }
+
+POINT2D initPoint2d(GLdouble x , GLdouble y){
+POINT2D P;
+P.x = x;
+P.y = y;
+return P;
+}
+
+POINT2D winMin = initPoint2d(-1, -1);
+POINT2D winMax = initPoint2d(1, 1);
+POINT2D viewMin1 = initPoint2d(0,100);
+POINT2D viewMin2 = initPoint2d(400, 100);
+POINT2D viewMax1 = initPoint2d(400, 500);
+POINT2D viewMax2 = initPoint2d(800, 500);
 
 void init( ) {
 glClearColor( 1.0, 1.0, 1.0, 0.0 );
@@ -180,7 +197,7 @@ forgatx[2][1]= sin(szog);
 forgatx[2][2]= cos(szog);
 forgatx[3][3]= 1;
 }
-
+/*
 void createNMatrix(){
 for(int i = 0; i<4 ; i++){
 	for(int j = 0; j<4 ; j++){
@@ -191,8 +208,22 @@ nagyit[0][0]=150;
 nagyit[1][1]=150;
 nagyit[2][2]=150;
 nagyit[3][3]=1;
-}
+}*/
 
+void createWtVMatrix(POINT2D viewMin, POINT2D viewMax,POINT2D winMin,POINT2D winMax,GLdouble WtV[][4]){
+for(int i = 0; i<4 ; i++){
+	for(int j = 0; j<4 ; j++){
+		WtV[i][j]=0;
+	}
+}
+WtV[0][0]=(viewMax.x-viewMin.x)/(winMax.x-winMin.x);
+WtV[0][3]=viewMin.x-winMin.x*((viewMax.x-viewMin.x)/(winMax.x-winMin.x));
+WtV[1][1]=(viewMax.y-viewMin.y)/(winMax.y-winMin.y);
+WtV[1][3]=viewMin.y-winMin.y*((viewMax.y-viewMin.y)/(winMax.y-winMin.y));
+WtV[2][2]=1;
+WtV[3][3]=1;
+}
+/*
 void createT1Matrix(GLdouble a, GLdouble b){
 for(int i = 0; i<4 ; i++){
 	for(int j = 0; j<4 ; j++){
@@ -205,8 +236,8 @@ eltol1[2][2]=1;
 eltol1[3][3]=1;
 eltol1[0][3]=a;
 eltol1[1][3]=b;
-}
-
+}*/
+/*
 void createT2Matrix(GLdouble a, GLdouble b){
 for(int i = 0; i<4 ; i++){
 	for(int j = 0; j<4 ; j++){
@@ -219,7 +250,7 @@ eltol2[2][2]=1;
 eltol2[3][3]=1;
 eltol2[0][3]=a;
 eltol2[1][3]=b;
-}
+}*/
 
 void createVCMatrix(){
 for(int i = 0; i<4 ; i++){
@@ -244,8 +275,6 @@ VM[1][1]=1;
 VM[3][3]=1;
 }
 
-
-
 void Display(){
 
 glClear(GL_COLOR_BUFFER_BIT);
@@ -257,6 +286,7 @@ createFY1Matrix(szogy1);
 createFY2Matrix(szogy2);
 createFY3Matrix(szogy3);
 
+/*
 mul_matrices(forgaty1,nagyit,kocka1);
 mul_matrices(forgatx,kocka1,temp1_1);
 mul_matrices(eltol1,temp1_1,temp1_2);
@@ -286,6 +316,35 @@ mul_matrices(forgaty3,nagyit,kocka6);
 mul_matrices(forgatx,kocka6,temp6_1);
 mul_matrices(eltol2,temp6_1,temp6_2);
 mul_matrices(VM,temp6_2,kocka6);
+*/
+
+createWtVMatrix(viewMin1,viewMax1,winMin,winMax, WtV1);
+
+mul_matrices(forgatx,forgaty1,temp1_1);
+mul_matrices(VM,temp1_1,temp1_2);
+mul_matrices(WtV1,temp1_2,kocka1);
+
+mul_matrices(forgatx,forgaty2,temp2_1);
+mul_matrices(VM,temp2_1,temp2_2);
+mul_matrices(WtV1,temp2_2,kocka2);
+
+mul_matrices(forgatx,forgaty3,temp3_1);
+mul_matrices(VM,temp3_1,temp3_2);
+mul_matrices(WtV1,temp3_2,kocka3);
+
+createWtVMatrix(viewMin2,viewMax2,winMin,winMax, WtV2);
+
+mul_matrices(forgatx,forgaty1,temp4_1);
+mul_matrices(VC,temp4_1,temp4_2);
+mul_matrices(WtV2,temp4_2,kocka4);
+
+mul_matrices(forgatx,forgaty2,temp5_1);
+mul_matrices(VC,temp5_1,temp5_2);
+mul_matrices(WtV2,temp5_2,kocka5);
+
+mul_matrices(forgatx,forgaty3,temp6_1);
+mul_matrices(VC,temp6_1,temp6_2);
+mul_matrices(WtV2,temp6_2,kocka6);
 
 for(GLint i = 0 ; i < 8 ; i++){
 	Qd[i] = transzform(kocka1,Q[i]);
@@ -675,73 +734,68 @@ glutPostRedisplay();
 glutSwapBuffers();
 }
 
-void update (int n){
-
-glutTimerFunc( 1000, update, 0 );
-}
-
 int main (int argc, char** argv) {
 
 createVMMatrix();
 createVCMatrix();
-createT1Matrix(522,300);
-createT2Matrix(266,300);
-createNMatrix();
+//createT1Matrix(522,300);
+//createT2Matrix(266,300);
+//createNMatrix();
 createFXMatrix(szogx);
 
-Q[0] = initPoint3dh(0.5,-0.1666,-0.5);
-Q[1] = initPoint3dh(-0.5,-0.1666,-0.5);
+Q[0] = initPoint3dh(0.5,-0.5/3,-0.5);
+Q[1] = initPoint3dh(-0.5,-0.5/3,-0.5);
 Q[2] = initPoint3dh(-0.5,-0.5,-0.5);
 Q[3] = initPoint3dh(0.5,-0.5,-0.5);
-Q[4] = initPoint3dh(0.5,-0.1666,0.5);
-Q[5] = initPoint3dh(-0.5,-0.1666,0.5);
+Q[4] = initPoint3dh(0.5,-0.5/3,0.5);
+Q[5] = initPoint3dh(-0.5,-0.5/3,0.5);
 Q[6] = initPoint3dh(-0.5,-0.5,0.5);
 Q[7] = initPoint3dh(0.5,-0.5,0.5);
 
-W[0] = initPoint3dh(0.5,0.1666,-0.5);
-W[1] = initPoint3dh(-0.5,0.1666,-0.5);
-W[2] = initPoint3dh(-0.5,-0.1666,-0.5);
-W[3] = initPoint3dh(0.5,-0.1666,-0.5);
-W[4] = initPoint3dh(0.5,0.1666,0.5);
-W[5] = initPoint3dh(-0.5,0.1666,0.5);
-W[6] = initPoint3dh(-0.5,-0.1666,0.5);
-W[7] = initPoint3dh(0.5,-0.1666,0.5);
+W[0] = initPoint3dh(0.5,0.5/3,-0.5);
+W[1] = initPoint3dh(-0.5,0.5/3,-0.5);
+W[2] = initPoint3dh(-0.5,-0.5/3,-0.5);
+W[3] = initPoint3dh(0.5,-0.5/3,-0.5);
+W[4] = initPoint3dh(0.5,0.5/3,0.5);
+W[5] = initPoint3dh(-0.5,0.5/3,0.5);
+W[6] = initPoint3dh(-0.5,-0.5/3,0.5);
+W[7] = initPoint3dh(0.5,-0.5/3,0.5);
 
 E[0] = initPoint3dh(0.5,0.5,-0.5);
 E[1] = initPoint3dh(-0.5,0.5,-0.5);
-E[2] = initPoint3dh(-0.5,0.1666,-0.5);
-E[3] = initPoint3dh(0.5,0.1666,-0.5);
+E[2] = initPoint3dh(-0.5,0.5/3,-0.5);
+E[3] = initPoint3dh(0.5,0.5/3,-0.5);
 E[4] = initPoint3dh(0.5,0.5,0.5);
 E[5] = initPoint3dh(-0.5,0.5,0.5);
-E[6] = initPoint3dh(-0.5,0.1666,0.5);
-E[7] = initPoint3dh(0.5,0.1666,0.5);
+E[6] = initPoint3dh(-0.5,0.5/3,0.5);
+E[7] = initPoint3dh(0.5,0.5/3,0.5);
 
-A[0] = initPoint3dh(0.5,0.0,-0.5);
-A[1] = initPoint3dh(-0.5,0.0,-0.5);
+A[0] = initPoint3dh(0.5,-0.5/3,-0.5);
+A[1] = initPoint3dh(-0.5,-0.5/3,-0.5);
 A[2] = initPoint3dh(-0.5,-0.5,-0.5);
 A[3] = initPoint3dh(0.5,-0.5,-0.5);
-A[4] = initPoint3dh(0.5,0.5,0.5);
-A[5] = initPoint3dh(-0.5,0.5,0.5);
-A[6] = initPoint3dh(-0.5,-0.0,0.5);
-A[7] = initPoint3dh(0.5,-0.0,0.5);
+A[4] = initPoint3dh(0.5,-0.5/3,0.5);
+A[5] = initPoint3dh(-0.5,-0.5/3,0.5);
+A[6] = initPoint3dh(-0.5,-0.5,0.5);
+A[7] = initPoint3dh(0.5,-0.5,0.5);
 
-S[0] = initPoint3dh(0.5,0.0,-0.5);
-S[1] = initPoint3dh(-0.5,0.0,-0.5);
-S[2] = initPoint3dh(-0.5,-0.5,-0.5);
-S[3] = initPoint3dh(0.5,-0.5,-0.5);
-S[4] = initPoint3dh(0.5,0.5,0.5);
-S[5] = initPoint3dh(-0.5,0.5,0.5);
-S[6] = initPoint3dh(-0.5,-0.0,0.5);
-S[7] = initPoint3dh(0.5,-0.0,0.5);
+S[0] = initPoint3dh(0.5,0.1666,-0.5);
+S[1] = initPoint3dh(-0.5,0.1666,-0.5);
+S[2] = initPoint3dh(-0.5,-0.1666,-0.5);
+S[3] = initPoint3dh(0.5,-0.1666,-0.5);
+S[4] = initPoint3dh(0.5,0.1666,0.5);
+S[5] = initPoint3dh(-0.5,0.1666,0.5);
+S[6] = initPoint3dh(-0.5,-0.1666,0.5);
+S[7] = initPoint3dh(0.5,-0.1666,0.5);
 
-D[0] = initPoint3dh(0.5,0.0,-0.5);
-D[1] = initPoint3dh(-0.5,0.0,-0.5);
-D[2] = initPoint3dh(-0.5,-0.5,-0.5);
-D[3] = initPoint3dh(0.5,-0.5,-0.5);
+D[0] = initPoint3dh(0.5,0.5,-0.5);
+D[1] = initPoint3dh(-0.5,0.5,-0.5);
+D[2] = initPoint3dh(-0.5,0.1666,-0.5);
+D[3] = initPoint3dh(0.5,0.1666,-0.5);
 D[4] = initPoint3dh(0.5,0.5,0.5);
 D[5] = initPoint3dh(-0.5,0.5,0.5);
-D[6] = initPoint3dh(-0.5,-0.0,0.5);
-D[7] = initPoint3dh(0.5,-0.0,0.5);	
+D[6] = initPoint3dh(-0.5,0.1666,0.5);
+D[7] = initPoint3dh(0.5,0.1666,0.5);	
 
 glutInit (&argc, argv);
 glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
@@ -752,7 +806,6 @@ init ( );
 glutDisplayFunc (Display);
 glutKeyboardFunc(keyPressed);
 glutKeyboardUpFunc(keyUp);
-glutTimerFunc( 1000, update, 0 );
 glutMainLoop ( );
 return 0;
 }
