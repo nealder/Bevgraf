@@ -240,7 +240,7 @@ int main (int argc, char** argv) {
 	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition (500, 100);
 	glutInitWindowSize (800, 600);
-	glutCreateWindow ("otodik");
+	glutCreateWindow ("kocka");
 	init ( );
 	glutDisplayFunc (Display);
 	glutMainLoop ( );

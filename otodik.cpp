@@ -18,6 +18,7 @@ GLdouble temp[4][4];
 GLdouble temp2[4][4];
 GLdouble VC[4][4];
 GLdouble VM[4][4];
+GLdouble forgat[4][4];
 GLint s = 3;
 POINT3DH Q[8];
 POINT3DH W[8];
@@ -45,6 +46,33 @@ void init( ) {
 	glLineStipple(1, 0xFF00);
 }
 
+POINT3DH transzform(double matrix[][4], POINT3DH Q){
+	POINT3DH P;
+		P.x=matrix[0][0]*Q.x + matrix[0][1]*Q.y + matrix[0][2]*Q.z + matrix[0][3]*Q.h;
+		P.y=matrix[1][0]*Q.x + matrix[1][1]*Q.y + matrix[1][2]*Q.z + matrix[1][3]*Q.h;
+		P.z=matrix[2][0]*Q.x + matrix[2][1]*Q.y + matrix[2][2]*Q.z + matrix[2][3]*Q.h;
+		P.h=matrix[3][0]*Q.x + matrix[3][1]*Q.y + matrix[3][2]*Q.z + matrix[3][3]*Q.h;
+	return P;
+}
+
+void keyPressed (unsigned char key, int x, int y) {
+    keyStates[key] = 1;
+}
+
+void keyUp (unsigned char key, int x, int y) {
+    keyStates[key] = 0;
+}
+
+void keyOperations ( ) {
+    if(keyStates['q']){
+    	for(GLint i = 0; i < 8; i++){
+    		Q[i].x = 0;
+    	}
+    }
+
+    glutPostRedisplay( );
+}
+
 void mul_matrices( double A[ ][ 4 ], double B[ ][ 4 ], double C[ ][ 4 ] ){
 	int i, j, k;
 	float sum;
@@ -58,6 +86,20 @@ void mul_matrices( double A[ ][ 4 ], double B[ ][ 4 ], double C[ ][ 4 ] ){
 		}
 	}
 }
+
+void createFMatrix(){
+		for(int i = 0; i<3 ; i++){
+			for(int j = 0; j<3 ; j++){
+				forgat[i][j]=0;
+			}
+		}
+		forgat[0][0]= cos(szog);
+		forgat[0][2]= sin(szog);
+		forgat[1][1]= 1;
+		forgat[2][0]= -sin(szog);
+		forgat[2][2]= cos(szog);
+		forgat[3][3]= 1;
+	}
 
 void createFYMatrix(){
 	for(int i = 0; i<4 ; i++){
@@ -125,15 +167,6 @@ void createVCMatrix(){
 	VC[3][3]=1;
 }
 
-POINT3DH transzform(double matrix[][4], POINT3DH Q){
-	POINT3DH P;
-		P.x=matrix[0][0]*Q.x + matrix[0][1]*Q.y + matrix[0][2]*Q.z + matrix[0][3]*Q.h;
-		P.y=matrix[1][0]*Q.x + matrix[1][1]*Q.y + matrix[1][2]*Q.z + matrix[1][3]*Q.h;
-		//P.z=0;
-		P.h=matrix[3][0]*Q.x + matrix[3][1]*Q.y + matrix[3][2]*Q.z + matrix[3][3]*Q.h;
-	return P;
-}
-
 void createVMMatrix(){
 	for(int i = 0; i<4 ; i++){
 		for(int j = 0; j<4 ; j++){
@@ -144,6 +177,8 @@ void createVMMatrix(){
 	VM[1][1]=1;
 	VM[3][3]=1;
 }
+
+
 
 void Display(){
 
@@ -538,6 +573,11 @@ void Display(){
 	glutSwapBuffers();
 }
 
+void update (int n){
+	
+	glutTimerFunc( 5, update, 0 );
+}
+
 int main (int argc, char** argv) {
 
 	createVMMatrix();
@@ -604,9 +644,7 @@ int main (int argc, char** argv) {
 	mul_matrices(forgaty,nagyit,kocka);
 	mul_matrices(forgatx,kocka,temp);
 	mul_matrices(eltol,temp,temp2);
-	mul_matrices(VM,temp2,kocka);
-
-	
+	mul_matrices(VM,temp2,kocka);	
 
 	glutInit (&argc, argv);
 	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
@@ -615,6 +653,9 @@ int main (int argc, char** argv) {
 	glutCreateWindow ("otodik");
 	init ( );
 	glutDisplayFunc (Display);
+	glutKeyboardFunc(keyPressed);
+    glutKeyboardUpFunc(keyUp);
+    glutTimerFunc( 5, update, 0 );
 	glutMainLoop ( );
 	return 0;
 }
