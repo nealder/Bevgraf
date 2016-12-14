@@ -26,6 +26,12 @@ POINT3DH E[8];
 POINT3DH A[8];
 POINT3DH S[8];
 POINT3DH D[8];
+POINT3DH Qd[8];
+POINT3DH Wd[8];
+POINT3DH Ed[8];
+POINT3DH Ad[8];
+POINT3DH Sd[8];
+POINT3DH Dd[8];
 
 POINT3DH initPoint3dh(GLdouble x , GLdouble y , GLdouble z){
 	POINT3DH P;
@@ -43,34 +49,33 @@ void init( ) {
 	glShadeModel( GL_FLAT );
 	glPointSize( 10.0 );
 	glLineWidth( 5.0 );
-	glLineStipple(1, 0xFF00);
 }
 
 POINT3DH transzform(double matrix[][4], POINT3DH Q){
 	POINT3DH P;
-		P.x=matrix[0][0]*Q.x + matrix[0][1]*Q.y + matrix[0][2]*Q.z + matrix[0][3]*Q.h;
-		P.y=matrix[1][0]*Q.x + matrix[1][1]*Q.y + matrix[1][2]*Q.z + matrix[1][3]*Q.h;
-		P.z=matrix[2][0]*Q.x + matrix[2][1]*Q.y + matrix[2][2]*Q.z + matrix[2][3]*Q.h;
-		P.h=matrix[3][0]*Q.x + matrix[3][1]*Q.y + matrix[3][2]*Q.z + matrix[3][3]*Q.h;
+	P.x=matrix[0][0]*Q.x + matrix[0][1]*Q.y + matrix[0][2]*Q.z + matrix[0][3]*Q.h;
+	P.y=matrix[1][0]*Q.x + matrix[1][1]*Q.y + matrix[1][2]*Q.z + matrix[1][3]*Q.h;
+	P.z=matrix[2][0]*Q.x + matrix[2][1]*Q.y + matrix[2][2]*Q.z + matrix[2][3]*Q.h;
+	P.h=matrix[3][0]*Q.x + matrix[3][1]*Q.y + matrix[3][2]*Q.z + matrix[3][3]*Q.h;
 	return P;
 }
 
 void keyPressed (unsigned char key, int x, int y) {
-    keyStates[key] = 1;
+	keyStates[key] = 1;
 }
 
 void keyUp (unsigned char key, int x, int y) {
-    keyStates[key] = 0;
+	keyStates[key] = 0;
 }
 
 void keyOperations ( ) {
-    if(keyStates['q']){
-    	for(GLint i = 0; i < 8; i++){
-    		Q[i].x = 0;
-    	}
-    }
+	if(keyStates['q']){
+		for(GLint i = 0; i < 8; i++){
+			//Q[i] = transzform(forgat,Q[i]);
+		}
+	}
 
-    glutPostRedisplay( );
+	glutPostRedisplay( );
 }
 
 void mul_matrices( double A[ ][ 4 ], double B[ ][ 4 ], double C[ ][ 4 ] ){
@@ -88,18 +93,18 @@ void mul_matrices( double A[ ][ 4 ], double B[ ][ 4 ], double C[ ][ 4 ] ){
 }
 
 void createFMatrix(){
-		for(int i = 0; i<3 ; i++){
-			for(int j = 0; j<3 ; j++){
-				forgat[i][j]=0;
-			}
+	for(int i = 0; i<3 ; i++){
+		for(int j = 0; j<3 ; j++){
+			forgat[i][j]=0;
 		}
-		forgat[0][0]= cos(szog);
-		forgat[0][2]= sin(szog);
-		forgat[1][1]= 1;
-		forgat[2][0]= -sin(szog);
-		forgat[2][2]= cos(szog);
-		forgat[3][3]= 1;
 	}
+	forgat[0][0]= cos(szog);
+	forgat[0][2]= sin(szog);
+	forgat[1][1]= 1;
+	forgat[2][0]= -sin(szog);
+	forgat[2][2]= cos(szog);
+	forgat[3][3]= 1;
+}
 
 void createFYMatrix(){
 	for(int i = 0; i<4 ; i++){
@@ -182,400 +187,403 @@ void createVMMatrix(){
 
 void Display(){
 
-	
-
-	for(GLint i = 0 ; i < 8 ; i++){
-		Q[i] = transzform(kocka,Q[i]);
-		W[i] = transzform(kocka,W[i]);
-		E[i] = transzform(kocka,E[i]);
-		A[i] = transzform(kocka,A[i]);
-		S[i] = transzform(kocka,S[i]);
-		D[i] = transzform(kocka,D[i]);
-	}
-
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0,0.0,0.0);
-		glBegin(GL_LINES);
-		glVertex2d(Q[0].x/Q[0].h,Q[0].y/Q[0].h);
-		glVertex2d(Q[1].x/Q[1].h,Q[1].y/Q[1].h);
-		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[0].x/Q[0].h,Q[0].y/Q[0].h);
-		glVertex2d(Q[4].x/Q[4].h,Q[4].y/Q[4].h);
-		glEnd();
+	keyOperations();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[0].x/Q[0].h,Q[0].y/Q[0].h);
-		glVertex2d(Q[3].x/Q[3].h,Q[3].y/Q[3].h);
-		glEnd();
-
-		glBegin(GL_LINES);
-		glVertex2d(Q[1].x/Q[1].h,Q[1].y/Q[1].h);
-		glVertex2d(Q[2].x/Q[2].h,Q[2].y/Q[2].h);
-		glEnd();
+	for(GLint i = 0 ; i < 8 ; i++){
+		Qd[i] = transzform(kocka,Q[i]);
+		Wd[i] = transzform(kocka,W[i]);
+		Ed[i] = transzform(kocka,E[i]);
+		//Ad[i] = transzform(kocka,A[i]);
+		//Sd[i] = transzform(kocka,S[i]);
+		//Dd[i] = transzform(kocka,D[i]);
+	}
 	
-		glBegin(GL_LINES);
-		glVertex2d(Q[1].x/Q[1].h,Q[1].y/Q[1].h);
-		glVertex2d(Q[5].x/Q[5].h,Q[5].y/Q[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[0].x/Qd[0].h,Qd[0].y/Qd[0].h);
+	glVertex2d(Qd[1].x/Qd[1].h,Qd[1].y/Qd[1].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[2].x/Q[2].h,Q[2].y/Q[2].h);
-		glVertex2d(Q[3].x/Q[3].h,Q[3].y/Q[3].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[0].x/Qd[0].h,Qd[0].y/Qd[0].h);
+	glVertex2d(Qd[4].x/Qd[4].h,Qd[4].y/Qd[4].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[2].x/Q[2].h,Q[2].y/Q[2].h);
-		glVertex2d(Q[6].x/Q[6].h,Q[6].y/Q[6].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[0].x/Qd[0].h,Qd[0].y/Qd[0].h);
+	glVertex2d(Qd[3].x/Qd[3].h,Qd[3].y/Qd[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[3].x/Q[3].h,Q[3].y/Q[3].h);
-		glVertex2d(Q[7].x/Q[7].h,Q[7].y/Q[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[1].x/Qd[1].h,Qd[1].y/Qd[1].h);
+	glVertex2d(Qd[2].x/Qd[2].h,Qd[2].y/Qd[2].h);
+	glEnd();
+	
+	glBegin(GL_LINES);
+	glVertex2d(Qd[1].x/Qd[1].h,Qd[1].y/Qd[1].h);
+	glVertex2d(Qd[5].x/Qd[5].h,Qd[5].y/Qd[5].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[6].x/Q[6].h,Q[6].y/Q[6].h);
-		glVertex2d(Q[7].x/Q[7].h,Q[7].y/Q[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[2].x/Qd[2].h,Qd[2].y/Qd[2].h);
+	glVertex2d(Qd[3].x/Qd[3].h,Qd[3].y/Qd[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[4].x/Q[4].h,Q[4].y/Q[4].h);
-		glVertex2d(Q[7].x/Q[7].h,Q[7].y/Q[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[2].x/Qd[2].h,Qd[2].y/Qd[2].h);
+	glVertex2d(Qd[6].x/Qd[6].h,Qd[6].y/Qd[6].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[4].x/Q[4].h,Q[4].y/Q[4].h);
-		glVertex2d(Q[5].x/Q[5].h,Q[5].y/Q[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[3].x/Qd[3].h,Qd[3].y/Qd[3].h);
+	glVertex2d(Qd[7].x/Qd[7].h,Qd[7].y/Qd[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(Q[6].x/Q[6].h,Q[6].y/Q[6].h);
-		glVertex2d(Q[5].x/Q[5].h,Q[5].y/Q[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Qd[6].x/Qd[6].h,Qd[6].y/Qd[6].h);
+	glVertex2d(Qd[7].x/Qd[7].h,Qd[7].y/Qd[7].h);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex2d(Qd[4].x/Qd[4].h,Qd[4].y/Qd[4].h);
+	glVertex2d(Qd[7].x/Qd[7].h,Qd[7].y/Qd[7].h);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex2d(Qd[4].x/Qd[4].h,Qd[4].y/Qd[4].h);
+	glVertex2d(Qd[5].x/Qd[5].h,Qd[5].y/Qd[5].h);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex2d(Qd[6].x/Qd[6].h,Qd[6].y/Qd[6].h);
+	glVertex2d(Qd[5].x/Qd[5].h,Qd[5].y/Qd[5].h);
+	glEnd();
 
 		//MÁSODIK 
 
-		glColor3f(0.0,1.0,0.0);
-		glBegin(GL_LINES);
-		glVertex2d(W[0].x/W[0].h,W[0].y/W[0].h);
-		glVertex2d(W[1].x/W[1].h,W[1].y/W[1].h);
-		glEnd();
+	glColor3f(0.0,1.0,0.0);
+	glBegin(GL_LINES);
+	glVertex2d(Wd[0].x/Wd[0].h,Wd[0].y/Wd[0].h);
+	glVertex2d(Wd[1].x/Wd[1].h,Wd[1].y/Wd[1].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[0].x/W[0].h,W[0].y/W[0].h);
-		glVertex2d(W[4].x/W[4].h,W[4].y/W[4].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[0].x/Wd[0].h,Wd[0].y/Wd[0].h);
+	glVertex2d(Wd[4].x/Wd[4].h,Wd[4].y/Wd[4].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[0].x/W[0].h,W[0].y/W[0].h);
-		glVertex2d(W[3].x/W[3].h,W[3].y/W[3].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[0].x/Wd[0].h,Wd[0].y/Wd[0].h);
+	glVertex2d(Wd[3].x/Wd[3].h,Wd[3].y/Wd[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[1].x/W[1].h,W[1].y/W[1].h);
-		glVertex2d(W[2].x/W[2].h,W[2].y/W[2].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[1].x/Wd[1].h,Wd[1].y/Wd[1].h);
+	glVertex2d(Wd[2].x/Wd[2].h,Wd[2].y/Wd[2].h);
+	glEnd();
 	
-		glBegin(GL_LINES);
-		glVertex2d(W[1].x/W[1].h,W[1].y/W[1].h);
-		glVertex2d(W[5].x/W[5].h,W[5].y/W[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[1].x/Wd[1].h,Wd[1].y/Wd[1].h);
+	glVertex2d(Wd[5].x/Wd[5].h,Wd[5].y/Wd[5].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[2].x/W[2].h,W[2].y/W[2].h);
-		glVertex2d(W[3].x/W[3].h,W[3].y/W[3].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[2].x/Wd[2].h,Wd[2].y/Wd[2].h);
+	glVertex2d(Wd[3].x/Wd[3].h,Wd[3].y/Wd[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[2].x/W[2].h,W[2].y/W[2].h);
-		glVertex2d(W[6].x/W[6].h,W[6].y/W[6].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[2].x/Wd[2].h,Wd[2].y/Wd[2].h);
+	glVertex2d(Wd[6].x/Wd[6].h,Wd[6].y/Wd[6].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[3].x/W[3].h,W[3].y/W[3].h);
-		glVertex2d(W[7].x/W[7].h,W[7].y/W[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[3].x/Wd[3].h,Wd[3].y/Wd[3].h);
+	glVertex2d(Wd[7].x/Wd[7].h,Wd[7].y/Wd[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[6].x/W[6].h,W[6].y/W[6].h);
-		glVertex2d(W[7].x/W[7].h,W[7].y/W[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[6].x/Wd[6].h,Wd[6].y/Wd[6].h);
+	glVertex2d(Wd[7].x/Wd[7].h,Wd[7].y/Wd[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[4].x/W[4].h,W[4].y/W[4].h);
-		glVertex2d(W[7].x/W[7].h,W[7].y/W[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[4].x/Wd[4].h,Wd[4].y/Wd[4].h);
+	glVertex2d(Wd[7].x/Wd[7].h,Wd[7].y/Wd[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[4].x/W[4].h,W[4].y/W[4].h);
-		glVertex2d(W[5].x/W[5].h,W[5].y/W[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[4].x/Wd[4].h,Wd[4].y/Wd[4].h);
+	glVertex2d(Wd[5].x/Wd[5].h,Wd[5].y/Wd[5].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(W[6].x/W[6].h,W[6].y/W[6].h);
-		glVertex2d(W[5].x/W[5].h,W[5].y/W[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Wd[6].x/Wd[6].h,Wd[6].y/Wd[6].h);
+	glVertex2d(Wd[5].x/Wd[5].h,Wd[5].y/Wd[5].h);
+	glEnd();
 
 		//HARMADIK
 
-		glColor3f(0.0,0.0,1.0);
-		glBegin(GL_LINES);
-		glVertex2d(E[0].x/E[0].h,E[0].y/E[0].h);
-		glVertex2d(E[1].x/E[1].h,E[1].y/E[1].h);
-		glEnd();
+	glColor3f(0.0,0.0,1.0);
+	glBegin(GL_LINES);
+	glVertex2d(Ed[0].x/Ed[0].h,Ed[0].y/Ed[0].h);
+	glVertex2d(Ed[1].x/Ed[1].h,Ed[1].y/Ed[1].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[0].x/E[0].h,E[0].y/E[0].h);
-		glVertex2d(E[4].x/E[4].h,E[4].y/E[4].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[0].x/Ed[0].h,Ed[0].y/Ed[0].h);
+	glVertex2d(Ed[4].x/Ed[4].h,Ed[4].y/Ed[4].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[0].x/E[0].h,E[0].y/E[0].h);
-		glVertex2d(E[3].x/E[3].h,E[3].y/E[3].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[0].x/Ed[0].h,Ed[0].y/Ed[0].h);
+	glVertex2d(Ed[3].x/Ed[3].h,Ed[3].y/Ed[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[1].x/E[1].h,E[1].y/E[1].h);
-		glVertex2d(E[2].x/E[2].h,E[2].y/E[2].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[1].x/Ed[1].h,Ed[1].y/Ed[1].h);
+	glVertex2d(Ed[2].x/Ed[2].h,Ed[2].y/Ed[2].h);
+	glEnd();
 	
-		glBegin(GL_LINES);
-		glVertex2d(E[1].x/E[1].h,E[1].y/E[1].h);
-		glVertex2d(E[5].x/E[5].h,E[5].y/E[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[1].x/Ed[1].h,Ed[1].y/Ed[1].h);
+	glVertex2d(Ed[5].x/Ed[5].h,Ed[5].y/Ed[5].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[2].x/E[2].h,E[2].y/E[2].h);
-		glVertex2d(E[3].x/E[3].h,E[3].y/E[3].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[2].x/Ed[2].h,Ed[2].y/Ed[2].h);
+	glVertex2d(Ed[3].x/Ed[3].h,Ed[3].y/Ed[3].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[2].x/E[2].h,E[2].y/E[2].h);
-		glVertex2d(E[6].x/E[6].h,E[6].y/E[6].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[2].x/Ed[2].h,Ed[2].y/Ed[2].h);
+	glVertex2d(Ed[6].x/Ed[6].h,Ed[6].y/Ed[6].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[3].x/E[3].h,E[3].y/E[3].h);
-		glVertex2d(E[7].x/E[7].h,E[7].y/E[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[3].x/Ed[3].h,Ed[3].y/Ed[3].h);
+	glVertex2d(Ed[7].x/Ed[7].h,Ed[7].y/Ed[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[6].x/E[6].h,E[6].y/E[6].h);
-		glVertex2d(E[7].x/E[7].h,E[7].y/E[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[6].x/Ed[6].h,Ed[6].y/Ed[6].h);
+	glVertex2d(Ed[7].x/Ed[7].h,Ed[7].y/Ed[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[4].x/E[4].h,E[4].y/E[4].h);
-		glVertex2d(E[7].x/E[7].h,E[7].y/E[7].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[4].x/Ed[4].h,Ed[4].y/Ed[4].h);
+	glVertex2d(Ed[7].x/Ed[7].h,Ed[7].y/Ed[7].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[4].x/E[4].h,E[4].y/E[4].h);
-		glVertex2d(E[5].x/E[5].h,E[5].y/E[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[4].x/Ed[4].h,Ed[4].y/Ed[4].h);
+	glVertex2d(Ed[5].x/Ed[5].h,Ed[5].y/Ed[5].h);
+	glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(E[6].x/E[6].h,E[6].y/E[6].h);
-		glVertex2d(E[5].x/E[5].h,E[5].y/E[5].h);
-		glEnd();
+	glBegin(GL_LINES);
+	glVertex2d(Ed[6].x/Ed[6].h,Ed[6].y/Ed[6].h);
+	glVertex2d(Ed[5].x/Ed[5].h,Ed[5].y/Ed[5].h);
+	glEnd();
 
 		//MÁSIK_ELSŐ
 /*
 		glColor3f(1.0,0.0,0.0);
 		glBegin(GL_LINES);
-		glVertex2d(A[0].x/A[0].h,A[0].y/A[0].h);
-		glVertex2d(A[1].x/A[1].h,A[1].y/A[1].h);
+		glVertex2d(Add[0].x/Add[0].h,Add[0].y/Add[0].h);
+		glVertex2d(Add[1].x/Add[1].h,Add[1].y/Add[1].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[0].x/A[0].h,A[0].y/A[0].h);
-		glVertex2d(A[4].x/A[4].h,A[4].y/A[4].h);
+		glVertex2d(Add[0].x/Ad[0].h,Ad[0].y/Ad[0].h);
+		glVertex2d(Add[4].x/Ad[4].h,Ad[4].y/Ad[4].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[0].x/A[0].h,A[0].y/A[0].h);
-		glVertex2d(A[3].x/A[3].h,A[3].y/A[3].h);
+		glVertex2d(Ad[0].x/Ad[0].h,Ad[0].y/Ad[0].h);
+		glVertex2d(Ad[3].x/Ad[3].h,Ad[3].y/Ad[3].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[1].x/A[1].h,A[1].y/A[1].h);
-		glVertex2d(A[2].x/A[2].h,A[2].y/A[2].h);
+		glVertex2d(Ad[1].x/Ad[1].h,Ad[1].y/Ad[1].h);
+		glVertex2d(Ad[2].x/Ad[2].h,Ad[2].y/Ad[2].h);
 		glEnd();
 	
 		glBegin(GL_LINES);
-		glVertex2d(A[1].x/A[1].h,A[1].y/A[1].h);
-		glVertex2d(A[5].x/A[5].h,A[5].y/A[5].h);
+		glVertex2d(Ad[1].x/Ad[1].h,Ad[1].y/Ad[1].h);
+		glVertex2d(Ad[5].x/Ad[5].h,Ad[5].y/Ad[5].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[2].x/A[2].h,A[2].y/A[2].h);
-		glVertex2d(A[3].x/A[3].h,A[3].y/A[3].h);
+		glVertex2d(Ad[2].x/Ad[2].h,Ad[2].y/Ad[2].h);
+		glVertex2d(Ad[3].x/Ad[3].h,Ad[3].y/Ad[3].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[2].x/A[2].h,A[2].y/A[2].h);
-		glVertex2d(A[6].x/A[6].h,A[6].y/A[6].h);
+		glVertex2d(Ad[2].x/Ad[2].h,Ad[2].y/Ad[2].h);
+		glVertex2d(Ad[6].x/Ad[6].h,Ad[6].y/Ad[6].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[3].x/A[3].h,A[3].y/A[3].h);
-		glVertex2d(A[7].x/A[7].h,A[7].y/A[7].h);
+		glVertex2d(Ad[3].x/Ad[3].h,Ad[3].y/Ad[3].h);
+		glVertex2d(Ad[7].x/Ad[7].h,Ad[7].y/Ad[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[6].x/A[6].h,A[6].y/A[6].h);
-		glVertex2d(A[7].x/A[7].h,A[7].y/A[7].h);
+		glVertex2d(Ad[6].x/Ad[6].h,Ad[6].y/Ad[6].h);
+		glVertex2d(Ad[7].x/Ad[7].h,Ad[7].y/Ad[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[4].x/A[4].h,A[4].y/A[4].h);
-		glVertex2d(A[7].x/A[7].h,A[7].y/A[7].h);
+		glVertex2d(Ad[4].x/Ad[4].h,Ad[4].y/Ad[4].h);
+		glVertex2d(Ad[7].x/Ad[7].h,Ad[7].y/Ad[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[4].x/A[4].h,A[4].y/A[4].h);
-		glVertex2d(A[5].x/A[5].h,A[5].y/A[5].h);
+		glVertex2d(Ad[4].x/Ad[4].h,Ad[4].y/Ad[4].h);
+		glVertex2d(Ad[5].x/Ad[5].h,Ad[5].y/Ad[5].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(A[6].x/A[6].h,A[6].y/A[6].h);
-		glVertex2d(A[5].x/A[5].h,A[5].y/A[5].h);
+		glVertex2d(Ad[6].x/Ad[6].h,Ad[6].y/Ad[6].h);
+		glVertex2d(Ad[5].x/Ad[5].h,Ad[5].y/Ad[5].h);
 		glEnd();
 
 		//MÁSIK_MÁSODIK
 
 		glColor3f(0.0,1.0,0.0);
-		glBegin(GL_LINES);
-		glVertex2d(S[0].x/S[0].h,S[0].y/S[0].h);
-		glVertex2d(S[1].x/S[1].h,S[1].y/S[1].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[0].x/Sd[0].h,Sd[0].y/Sd[0].h);
+		glVertex2d(Sd[1].x/Sd[1].h,Sd[1].y/Sd[1].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[0].x/S[0].h,S[0].y/S[0].h);
-		glVertex2d(S[4].x/S[4].h,S[4].y/S[4].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[0].x/Sd[0].h,Sd[0].y/Sd[0].h);
+		glVertex2d(Sd[4].x/Sd[4].h,Sd[4].y/Sd[4].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[0].x/S[0].h,S[0].y/S[0].h);
-		glVertex2d(S[3].x/S[3].h,S[3].y/S[3].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[0].x/Sd[0].h,Sd[0].y/Sd[0].h);
+		glVertex2d(Sd[3].x/Sd[3].h,Sd[3].y/Sd[3].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[1].x/S[1].h,S[1].y/S[1].h);
-		glVertex2d(S[2].x/S[2].h,S[2].y/S[2].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[1].x/Sd[1].h,Sd[1].y/Sd[1].h);
+		glVertex2d(Sd[2].x/Sd[2].h,Sd[2].y/Sd[2].h);
 		glEnd();
 	
-		glBegin(GL_LINES);
-		glVertex2d(S[1].x/S[1].h,S[1].y/S[1].h);
-		glVertex2d(S[5].x/S[5].h,S[5].y/S[5].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[1].x/Sd[1].h,Sd[1].y/Sd[1].h);
+		glVertex2d(Sd[5].x/Sd[5].h,Sd[5].y/Sd[5].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[2].x/S[2].h,S[2].y/S[2].h);
-		glVertex2d(S[3].x/S[3].h,S[3].y/S[3].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[2].x/Sd[2].h,Sd[2].y/Sd[2].h);
+		glVertex2d(Sd[3].x/Sd[3].h,Sd[3].y/Sd[3].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[2].x/S[2].h,S[2].y/S[2].h);
-		glVertex2d(S[6].x/S[6].h,S[6].y/S[6].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[2].x/Sd[2].h,Sd[2].y/Sd[2].h);
+		glVertex2d(Sd[6].x/Sd[6].h,Sd[6].y/Sd[6].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[3].x/S[3].h,S[3].y/S[3].h);
-		glVertex2d(S[7].x/S[7].h,S[7].y/S[7].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[3].x/Sd[3].h,Sd[3].y/Sd[3].h);
+		glVertex2d(Sd[7].x/Sd[7].h,Sd[7].y/Sd[7].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[6].x/S[6].h,S[6].y/S[6].h);
-		glVertex2d(S[7].x/S[7].h,S[7].y/S[7].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[6].x/Sd[6].h,Sd[6].y/Sd[6].h);
+		glVertex2d(Sd[7].x/Sd[7].h,Sd[7].y/Sd[7].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[4].x/S[4].h,S[4].y/S[4].h);
-		glVertex2d(S[7].x/S[7].h,S[7].y/S[7].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[4].x/Sd[4].h,Sd[4].y/Sd[4].h);
+		glVertex2d(Sd[7].x/Sd[7].h,Sd[7].y/Sd[7].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[4].x/S[4].h,S[4].y/S[4].h);
-		glVertex2d(S[5].x/S[5].h,S[5].y/S[5].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[4].x/Sd[4].h,Sd[4].y/Sd[4].h);
+		glVertex2d(Sd[5].x/Sd[5].h,Sd[5].y/Sd[5].h);
 		glEnd();
 
-		glBegin(GL_LINES);
-		glVertex2d(S[6].x/S[6].h,S[6].y/S[6].h);
-		glVertex2d(S[5].x/S[5].h,S[5].y/S[5].h);
+		glBegin(GL_LINESd);
+		glVertex2d(Sd[6].x/Sd[6].h,Sd[6].y/Sd[6].h);
+		glVertex2d(Sd[5].x/Sd[5].h,Sd[5].y/Sd[5].h);
 		glEnd();
 
 		//második_harmadik
 
 		glColor3f(0.0,0.0,1.0);
 		glBegin(GL_LINES);
-		glVertex2d(D[0].x/D[0].h,D[0].y/D[0].h);
-		glVertex2d(D[1].x/D[1].h,D[1].y/D[1].h);
+		glVertex2d(Dd[0].x/Dd[0].h,Dd[0].y/Dd[0].h);
+		glVertex2d(Dd[1].x/Dd[1].h,Dd[1].y/Dd[1].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[0].x/D[0].h,D[0].y/D[0].h);
-		glVertex2d(D[4].x/D[4].h,D[4].y/D[4].h);
+		glVertex2d(Dd[0].x/Dd[0].h,Dd[0].y/Dd[0].h);
+		glVertex2d(Dd[4].x/Dd[4].h,Dd[4].y/Dd[4].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[0].x/D[0].h,D[0].y/D[0].h);
-		glVertex2d(D[3].x/D[3].h,D[3].y/D[3].h);
+		glVertex2d(Dd[0].x/Dd[0].h,Dd[0].y/Dd[0].h);
+		glVertex2d(Dd[3].x/Dd[3].h,Dd[3].y/Dd[3].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[1].x/D[1].h,D[1].y/D[1].h);
-		glVertex2d(D[2].x/D[2].h,D[2].y/D[2].h);
+		glVertex2d(Dd[1].x/Dd[1].h,Dd[1].y/Dd[1].h);
+		glVertex2d(Dd[2].x/Dd[2].h,Dd[2].y/Dd[2].h);
 		glEnd();
 	
 		glBegin(GL_LINES);
-		glVertex2d(D[1].x/D[1].h,D[1].y/D[1].h);
-		glVertex2d(D[5].x/D[5].h,D[5].y/D[5].h);
+		glVertex2d(Dd[1].x/Dd[1].h,Dd[1].y/Dd[1].h);
+		glVertex2d(Dd[5].x/Dd[5].h,Dd[5].y/Dd[5].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[2].x/D[2].h,D[2].y/D[2].h);
-		glVertex2d(D[3].x/D[3].h,D[3].y/D[3].h);
+		glVertex2d(Dd[2].x/Dd[2].h,Dd[2].y/Dd[2].h);
+		glVertex2d(Dd[3].x/Dd[3].h,Dd[3].y/Dd[3].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[2].x/D[2].h,D[2].y/D[2].h);
-		glVertex2d(D[6].x/D[6].h,D[6].y/D[6].h);
+		glVertex2d(Dd[2].x/Dd[2].h,Dd[2].y/Dd[2].h);
+		glVertex2d(Dd[6].x/Dd[6].h,Dd[6].y/Dd[6].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[3].x/D[3].h,D[3].y/D[3].h);
-		glVertex2d(D[7].x/D[7].h,D[7].y/D[7].h);
+		glVertex2d(Dd[3].x/Dd[3].h,Dd[3].y/Dd[3].h);
+		glVertex2d(Dd[7].x/Dd[7].h,Dd[7].y/Dd[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[6].x/D[6].h,D[6].y/D[6].h);
-		glVertex2d(D[7].x/D[7].h,D[7].y/D[7].h);
+		glVertex2d(Dd[6].x/Dd[6].h,Dd[6].y/Dd[6].h);
+		glVertex2d(Dd[7].x/Dd[7].h,Dd[7].y/Dd[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[4].x/D[4].h,D[4].y/D[4].h);
-		glVertex2d(D[7].x/D[7].h,D[7].y/D[7].h);
+		glVertex2d(Dd[4].x/Dd[4].h,Dd[4].y/Dd[4].h);
+		glVertex2d(Dd[7].x/Dd[7].h,Dd[7].y/Dd[7].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[4].x/D[4].h,D[4].y/D[4].h);
-		glVertex2d(D[5].x/D[5].h,D[5].y/D[5].h);
+		glVertex2d(Dd[4].x/Dd[4].h,Dd[4].y/Dd[4].h);
+		glVertex2d(Dd[5].x/Dd[5].h,Dd[5].y/Dd[5].h);
 		glEnd();
 
 		glBegin(GL_LINES);
-		glVertex2d(D[6].x/D[6].h,D[6].y/D[6].h);
-		glVertex2d(D[5].x/D[5].h,D[5].y/D[5].h);
+		glVertex2d(Dd[6].x/Dd[6].h,Dd[6].y/Dd[6].h);
+		glVertex2d(Dd[5].x/Dd[5].h,Dd[5].y/Dd[5].h);
 		glEnd();
 */
+
+	glutPostRedisplay();
 	glutSwapBuffers();
 }
 
 void update (int n){
 	
-	glutTimerFunc( 5, update, 0 );
+	glutTimerFunc( 1000, update, 0 );
 }
 
 int main (int argc, char** argv) {
@@ -647,15 +655,15 @@ int main (int argc, char** argv) {
 	mul_matrices(VM,temp2,kocka);	
 
 	glutInit (&argc, argv);
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowPosition (500, 100);
 	glutInitWindowSize (800, 600);
 	glutCreateWindow ("otodik");
 	init ( );
 	glutDisplayFunc (Display);
 	glutKeyboardFunc(keyPressed);
-    glutKeyboardUpFunc(keyUp);
-    glutTimerFunc( 5, update, 0 );
+	glutKeyboardUpFunc(keyUp);
+	glutTimerFunc( 1000, update, 0 );
 	glutMainLoop ( );
 	return 0;
 }
