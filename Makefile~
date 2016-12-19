@@ -1,0 +1,2 @@
+all: 
+	g++ -Wal -g hatodik.cpp -lGL -lGLU -lglut -o hatodik -std=c++11
