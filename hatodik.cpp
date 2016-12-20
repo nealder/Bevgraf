@@ -339,7 +339,6 @@ void Display(){
 		displayable_kocka6[i]=transzform(temp2,kocka6[i]);
 		displayable_kocka7[i]=transzform(temp2,kocka7[i]);
 	}
-	std::cout << "; " << displayable_kocka1[0].x;
 
 	POINT3DH side1_1[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[3]};
 POINT3DH side1_2[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]};
@@ -390,9 +389,7 @@ POINT3DH side7_4[4]={displayable_kocka7[3],displayable_kocka7[2],displayable_koc
 POINT3DH side7_5[4]={displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]};
 POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]};
 
-	std::cout << "| " << side1_1[0].x;
-
-	glColor3f(1.0,0.5,0.0);
+	glColor3f(1.0,0.0,0.0);
 
 	//elso kocka elso oldal
 	glBegin(GL_POLYGON);
@@ -436,6 +433,8 @@ POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_koc
 		}
 	glEnd();
 
+
+	glColor3f(0.0,1.0,0.0);
 	//2 kocka elso oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
@@ -477,8 +476,8 @@ POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_koc
 			glVertex2d(side2_6[i].x,side2_6[i].y);
 		}
 	glEnd();
-
-	//3 kocka 1o oldal
+	glColor3f(0.0,0.0,1.0);
+	//3 kocka 1 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
 			glVertex2d(side3_1[i].x,side3_1[i].y);
@@ -499,52 +498,192 @@ POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_koc
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//3 kocka 4 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side3_4[i].x,side3_4[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//3 kocka 5 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side3_5[i].x,side3_5[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//3 kocka 6 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side3_6[i].x,side3_6[i].y);
+		}
+	glEnd();
+	glColor3f(0.0,0.0,0.0);
+	//4 kocka elso oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side4_1[i].x,side4_1[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//4 kocka 2 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side4_2[i].x,side4_2[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//4 kocka 3 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side4_3[i].x,side4_3[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//4 kocka 4 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side4_4[i].x,side4_4[i].y);
 		}
 	glEnd();
 
-	//elso kocka elso oldal
+	//4 kocka 5 oldal
 	glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
+			glVertex2d(side4_5[i].x,side4_5[i].y);
+		}
+	glEnd();
+
+	//4 kocka 6 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side4_6[i].x,side4_6[i].y);
+		}
+	glEnd();
+	glColor3f(1.0,0.0,1.0);
+	//5 kocka 1 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_1[i].x,side5_1[i].y);
+		}
+	glEnd();
+
+	//5 kocka 2 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_2[i].x,side5_2[i].y);
+		}
+	glEnd();
+
+	//5 kocka 3 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_3[i].x,side5_3[i].y);
+		}
+	glEnd();
+
+	//5 kocka 4 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_4[i].x,side5_4[i].y);
+		}
+	glEnd();
+
+	//5 kocka 5 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_5[i].x,side5_5[i].y);
+		}
+	glEnd();
+
+	//5 kocka 6 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side5_6[i].x,side5_6[i].y);
+		}
+	glEnd();
+	glColor3f(1.0,1.0,0.0);
+	//6 kocka 1 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_1[i].x,side6_1[i].y);
+		}
+	glEnd();
+
+	//6 kocka 2 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_2[i].x,side6_2[i].y);
+		}
+	glEnd();
+
+	//6 kocka 3 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_3[i].x,side6_3[i].y);
+		}
+	glEnd();
+
+	//6 kocka 4 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_4[i].x,side6_4[i].y);
+		}
+	glEnd();
+
+	//6 kocka 5 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_5[i].x,side6_5[i].y);
+		}
+	glEnd();
+
+	//6 kocka 6 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side6_6[i].x,side6_6[i].y);
+		}
+	glEnd();
+	glColor3f(0.0,1.0,1.0);
+	//7 kocka 1 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_1[i].x,side7_1[i].y);
+		}
+	glEnd();
+
+	//7 kocka 2 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_2[i].x,side7_2[i].y);
+		}
+	glEnd();
+
+	//7 kocka 3 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_3[i].x,side7_3[i].y);
+		}
+	glEnd();
+
+	//7 kocka 4 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_4[i].x,side7_4[i].y);
+		}
+	glEnd();
+
+	//7 kocka 5 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_5[i].x,side7_5[i].y);
+		}
+	glEnd();
+
+	//7 kocka 6 oldal
+	glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d(side7_6[i].x,side7_6[i].y);
 		}
 	glEnd();
 
