@@ -2,6 +2,7 @@
 #include <math.h>
 #include <iostream>
 #include <list>
+#include <vector>
 GLint keyStates[256];
 #define PI 3.141592653589793
 GLint winWidth = 800;
@@ -10,6 +11,21 @@ GLint winHeight = 600;
 typedef struct point3dh { GLdouble x, y, z, h; } POINT3DH;
 typedef struct point2d { GLdouble x, y; } POINT2D;
 typedef struct point3d { GLdouble x, y, z; } POINT3D;
+
+class Side{
+public:
+
+	POINT3DH tomb[4];
+
+	Side(POINT3DH a,POINT3DH b,POINT3DH c,POINT3DH d){
+		
+		this->tomb[0]=a;
+		this->tomb[1]=b;
+		this->tomb[2]=c;
+		this->tomb[3]=d;
+	}
+};
+
 GLdouble eltol1[3]={0,0,0};
 GLdouble eltol2[3]={-2,0,0};
 GLdouble eltol3[3]={2,0,0};
@@ -22,7 +38,8 @@ GLdouble temp2[4][4]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
 GLdouble VC[4][4];
 GLdouble WtV[4][4];
 GLdouble s = 3;
-GLdouble delta = 5 * 0.0174532925;
+GLdouble deltaf = 0.15;
+GLdouble deltav = 2 * 0.0174532925;
 GLdouble K[4][4];
 POINT3DH kocka1[8];
 POINT3DH kocka2[8];
@@ -38,107 +55,7 @@ POINT3DH displayable_kocka4[8];
 POINT3DH displayable_kocka5[8];
 POINT3DH displayable_kocka6[8];
 POINT3DH displayable_kocka7[8];
-/*
-POINT3DH side1_1[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[3]};
-POINT3DH side1_2[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]};
-POINT3DH side1_3[4]={displayable_kocka1[4],displayable_kocka1[5],displayable_kocka1[7],displayable_kocka1[6]};
-POINT3DH side1_4[4]={displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[7]};
-POINT3DH side1_5[4]={displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[4]};
-POINT3DH side1_6[4]={displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5]};
-
-POINT3DH side2_1[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[3]};
-POINT3DH side2_2[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4]};
-POINT3DH side2_3[4]={displayable_kocka2[4],displayable_kocka2[5],displayable_kocka2[7],displayable_kocka2[6]};
-POINT3DH side2_4[4]={displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[7]};
-POINT3DH side2_5[4]={displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[4]};
-POINT3DH side2_6[4]={displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5]};
-
-POINT3DH side3_1[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[3]};
-POINT3DH side3_2[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4]};
-POINT3DH side3_3[4]={displayable_kocka3[4],displayable_kocka3[5],displayable_kocka3[7],displayable_kocka3[6]};
-POINT3DH side3_4[4]={displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[7]};
-POINT3DH side3_5[4]={displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[4]};
-POINT3DH side3_6[4]={displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5]};
-
-POINT3DH side4_1[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[3]};
-POINT3DH side4_2[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4]};
-POINT3DH side4_3[4]={displayable_kocka4[4],displayable_kocka4[5],displayable_kocka4[7],displayable_kocka4[6]};
-POINT3DH side4_4[4]={displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[7]};
-POINT3DH side4_5[4]={displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[4]};
-POINT3DH side4_6[4]={displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5]};
-
-POINT3DH side5_1[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[3]};
-POINT3DH side5_2[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4]};
-POINT3DH side5_3[4]={displayable_kocka5[4],displayable_kocka5[5],displayable_kocka5[7],displayable_kocka5[7]};
-POINT3DH side5_4[4]={displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[6]};
-POINT3DH side5_5[4]={displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[4]};
-POINT3DH side5_6[4]={displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5]};
-
-POINT3DH side6_1[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[3]};
-POINT3DH side6_2[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4]};
-POINT3DH side6_3[4]={displayable_kocka6[4],displayable_kocka6[5],displayable_kocka6[7],displayable_kocka6[7]};
-POINT3DH side6_4[4]={displayable_kocka6[0],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[6]};
-POINT3DH side6_5[4]={displayable_kocka6[3],displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[4]};
-POINT3DH side6_6[4]={displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5]};
-
-POINT3DH side7_1[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[3]};
-POINT3DH side7_2[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]};
-POINT3DH side7_3[4]={displayable_kocka7[4],displayable_kocka7[5],displayable_kocka7[7],displayable_kocka7[7]};
-POINT3DH side7_4[4]={displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[6]};
-POINT3DH side7_5[4]={displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]};
-POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]};
-
-void lapozas(){
- side1_1={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[3]};
- side1_2[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]};
- side1_3[4]={displayable_kocka1[4],displayable_kocka1[5],displayable_kocka1[7],displayable_kocka1[6]};
- side1_4[4]={displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[7]};
- side1_5[4]={displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[4]};
- side1_6[4]={displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5]};
-
- side2_1[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[3]};
- side2_2[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4]};
- side2_3[4]={displayable_kocka2[4],displayable_kocka2[5],displayable_kocka2[7],displayable_kocka2[6]};
- side2_4[4]={displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[7]};
- side2_5[4]={displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[4]};
- side2_6[4]={displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5]};
-
-side3_1[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[3]};
-side3_2[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4]};
-side3_3[4]={displayable_kocka3[4],displayable_kocka3[5],displayable_kocka3[7],displayable_kocka3[6]};
-side3_4[4]={displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[7]};
-side3_5[4]={displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[4]};
-side3_6[4]={displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5]};
-
-side4_1[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[3]};
-side4_2[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4]};
-side4_3[4]={displayable_kocka4[4],displayable_kocka4[5],displayable_kocka4[7],displayable_kocka4[6]};
-side4_4[4]={displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[7]};
-side4_5[4]={displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[4]};
-side4_6[4]={displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5]};
-
-side5_1[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[3]};
-side5_2[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4]};
-side5_3[4]={displayable_kocka5[4],displayable_kocka5[5],displayable_kocka5[7],displayable_kocka5[7]};
-side5_4[4]={displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[6]};
-side5_5[4]={displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[4]};
-side5_6[4]={displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5]};
-
-side6_1[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[3]};
-side6_2[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4]};
-side6_3[4]={displayable_kocka6[4],displayable_kocka6[5],displayable_kocka6[7],displayable_kocka6[7]};
-side6_4[4]={displayable_kocka6[0],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[6]};
-side6_5[4]={displayable_kocka6[3],displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[4]};
-side6_6[4]={displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5]};
-
-side7_1[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[3]};
-side7_2[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]};
-side7_3[4]={displayable_kocka7[4],displayable_kocka7[5],displayable_kocka7[7],displayable_kocka7[7]};
-side7_4[4]={displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[6]};
-side7_5[4]={displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]};
-side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]};
-}*/
-
+std::vector<Side> allSide;
 
 void kockaeltol(POINT3DH kocka[8], GLdouble eltol[3]){
 	for(GLint i=0; i<8 ;i++){
@@ -146,6 +63,24 @@ void kockaeltol(POINT3DH kocka[8], GLdouble eltol[3]){
 		kocka[i].y+=eltol[1];
 		kocka[i].z+=eltol[2];
 	}
+}
+
+POINT3D Sidemidp(Side G){
+	POINT3D A;
+	for(GLint i=0;i<4;i++){
+		A.x+=G.tomb[i].x;
+		A.y+=G.tomb[i].y;
+		A.z+=G.tomb[i].z;
+	}
+	A.x=A.x/4;
+	A.y=A.y/4;
+	A.z=A.z/4;
+	return A;
+}
+
+bool which_closest(Side qwe, Side asd){
+
+	hossz()
 }
 
 POINT3D initPoint3d(GLdouble x, GLdouble y, GLdouble z){
@@ -156,9 +91,10 @@ POINT3D initPoint3d(GLdouble x, GLdouble y, GLdouble z){
 	return P;
 }
 
-POINT3D C = initPoint3d (2,0,0);
+POINT3D C = initPoint3d (5,0,0);
 POINT3D P = initPoint3d (0,0,0);
-POINT3D up = initPoint3d (0, 1.0, 0);
+POINT3D up = initPoint3d (0, 0.0, 1.0);
+POINT3D PCinit = initPoint3d(-(P.x-C.x),-(P.y-C.y),-(P.z-C.z));
 
 POINT3DH initPoint3dh(GLdouble x , GLdouble y , GLdouble z){
 	POINT3DH P;
@@ -176,8 +112,8 @@ POINT2D initPoint2d(GLdouble x , GLdouble y){
 	return P;
 }
 
-POINT2D winMin = initPoint2d(-4, -4);
-POINT2D winMax = initPoint2d(4, 4);
+POINT2D winMin = initPoint2d(-1, -1);
+POINT2D winMax = initPoint2d(1, 1);
 POINT2D viewMin = initPoint2d(200,100);
 POINT2D viewMax = initPoint2d(600, 500);
 
@@ -187,7 +123,7 @@ void init( ) {
 	gluOrtho2D( 0.0, winWidth, 0.0, winHeight );
 	glShadeModel( GL_FLAT );
 	glPointSize( 10.0 );
-	glLineWidth( 5.0 );
+	glLineWidth( 10.0 );
 }
 
 POINT3DH transzform(double matrix[][4], POINT3DH Q){
@@ -220,7 +156,26 @@ void keyUp (unsigned char key, int x, int y) {
 }
 
 void keyOperations ( ) {
-	
+	if(keyStates['w']){
+		if(C.z<=10 && C.z>=-10){
+			C.z+=deltaf;
+		}		
+	}
+	if(keyStates['s']){
+		if(C.z<=10 && C.z>=-10){
+			C.z-=deltaf;
+		}		
+	}
+	if(keyStates['d']){
+		C.x=hossz(PCinit)*cos(deltav);
+		C.y=hossz(PCinit)*sin(deltav);
+		deltav+=0.01;	
+	}
+	if(keyStates['a']){
+		C.x=hossz(PCinit)*cos(deltav);
+		C.y=hossz(PCinit)*sin(deltav);
+		deltav-=0.01; 	
+	}
 
 	glutPostRedisplay( );
 }
@@ -245,18 +200,18 @@ void createKMatrix(){
 			K[i][j]=0;
 		}
 	}
-
-	POINT3D W = initPoint3d (-(C.x-P.x) / hossz(C),
-							 -(C.y-P.y) / hossz(C),
-							 -(C.z-P.z) / hossz(C));
+	POINT3D PC = initPoint3d(-(P.x-C.x),-(P.y-C.y),-(P.z-C.z));
+	POINT3D W = initPoint3d (PC.x / hossz(PC),
+							PC.y / hossz(PC),
+							PC.z / hossz(PC));
 
 	POINT3D U = initPoint3d ((vektmul(up,W).x/hossz(vektmul(up,W))),
-							 (vektmul(up,W).y/hossz(vektmul(up,W))),
-							 (vektmul(up,W).z/hossz(vektmul(up,W))));
+							(vektmul(up,W).y/hossz(vektmul(up,W))),
+							(vektmul(up,W).z/hossz(vektmul(up,W))));
 
 	POINT3D V = initPoint3d ((vektmul(W,U).x) / hossz(vektmul(W,U)), 
-							 (vektmul(W,U).x) / hossz(vektmul(W,U)), 
-							 (vektmul(W,U).x) / hossz(vektmul(W,U)));
+							(vektmul(W,U).y) / hossz(vektmul(W,U)), 
+							(vektmul(W,U).z) / hossz(vektmul(W,U)));
 
 	K[0][0]=U.x;
 	K[0][1]=U.y;
@@ -340,351 +295,651 @@ void Display(){
 		displayable_kocka7[i]=transzform(temp2,kocka7[i]);
 	}
 
-	POINT3DH side1_1[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[3]};
-POINT3DH side1_2[4]={displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]};
-POINT3DH side1_3[4]={displayable_kocka1[4],displayable_kocka1[5],displayable_kocka1[7],displayable_kocka1[6]};
-POINT3DH side1_4[4]={displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[7]};
-POINT3DH side1_5[4]={displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[4]};
-POINT3DH side1_6[4]={displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5]};
+	Side side1_1(displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[1]);
+	Side side1_2(displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[4]);
+	Side side1_3(displayable_kocka1[4],displayable_kocka1[7],displayable_kocka1[6],displayable_kocka1[5]);
+	Side side1_4(displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5]);
+	Side side1_5(displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]);
+	Side side1_6(displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[7]);
 
-POINT3DH side2_1[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[3]};
-POINT3DH side2_2[4]={displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4]};
-POINT3DH side2_3[4]={displayable_kocka2[4],displayable_kocka2[5],displayable_kocka2[7],displayable_kocka2[6]};
-POINT3DH side2_4[4]={displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[7]};
-POINT3DH side2_5[4]={displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[4]};
-POINT3DH side2_6[4]={displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5]};
+	Side side2_1(displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[1]);
+	Side side2_2(displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[4]);
+	Side side2_3(displayable_kocka2[4],displayable_kocka2[7],displayable_kocka2[6],displayable_kocka2[5]);
+	Side side2_4(displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5]);
+	Side side2_5(displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4]);
+	Side side2_6(displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[7]);
 
-POINT3DH side3_1[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[3]};
-POINT3DH side3_2[4]={displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4]};
-POINT3DH side3_3[4]={displayable_kocka3[4],displayable_kocka3[5],displayable_kocka3[7],displayable_kocka3[6]};
-POINT3DH side3_4[4]={displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[7]};
-POINT3DH side3_5[4]={displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[4]};
-POINT3DH side3_6[4]={displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5]};
+	Side side3_1(displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[1]);
+	Side side3_2(displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[4]);
+	Side side3_3(displayable_kocka3[4],displayable_kocka3[7],displayable_kocka3[6],displayable_kocka3[5]);
+	Side side3_4(displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5]);
+	Side side3_5(displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4]);
+	Side side3_6(displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[7]);
 
-POINT3DH side4_1[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[3]};
-POINT3DH side4_2[4]={displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4]};
-POINT3DH side4_3[4]={displayable_kocka4[4],displayable_kocka4[5],displayable_kocka4[7],displayable_kocka4[6]};
-POINT3DH side4_4[4]={displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[7]};
-POINT3DH side4_5[4]={displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[4]};
-POINT3DH side4_6[4]={displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5]};
+	Side side4_1(displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[1]);
+	Side side4_2(displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[4]);
+	Side side4_3(displayable_kocka4[4],displayable_kocka4[7],displayable_kocka4[6],displayable_kocka4[5]);
+	Side side4_4(displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5]);
+	Side side4_5(displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4]);
+	Side side4_6(displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[7]);
 
-POINT3DH side5_1[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[3]};
-POINT3DH side5_2[4]={displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4]};
-POINT3DH side5_3[4]={displayable_kocka5[4],displayable_kocka5[5],displayable_kocka5[7],displayable_kocka5[7]};
-POINT3DH side5_4[4]={displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[6]};
-POINT3DH side5_5[4]={displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[4]};
-POINT3DH side5_6[4]={displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5]};
+	Side side5_1(displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[1]);
+	Side side5_2(displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[4]);
+	Side side5_3(displayable_kocka5[4],displayable_kocka5[7],displayable_kocka5[6],displayable_kocka5[5]);
+	Side side5_4(displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5]);
+	Side side5_5(displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4]);
+	Side side5_6(displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[7]);
 
-POINT3DH side6_1[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[3]};
-POINT3DH side6_2[4]={displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4]};
-POINT3DH side6_3[4]={displayable_kocka6[4],displayable_kocka6[5],displayable_kocka6[7],displayable_kocka6[7]};
-POINT3DH side6_4[4]={displayable_kocka6[0],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[6]};
-POINT3DH side6_5[4]={displayable_kocka6[3],displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[4]};
-POINT3DH side6_6[4]={displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5]};
+	Side side6_1(displayable_kocka6[0],displayable_kocka6[3],displayable_kocka6[2],displayable_kocka6[1]);
+	Side side6_2(displayable_kocka6[0],displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[4]);
+	Side side6_3(displayable_kocka6[4],displayable_kocka6[7],displayable_kocka6[6],displayable_kocka6[5]);
+	Side side6_4(displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5]);
+	Side side6_5(displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4]);
+	Side side6_6(displayable_kocka6[3],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[7]);
 
-POINT3DH side7_1[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[3]};
-POINT3DH side7_2[4]={displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]};
-POINT3DH side7_3[4]={displayable_kocka7[4],displayable_kocka7[5],displayable_kocka7[7],displayable_kocka7[7]};
-POINT3DH side7_4[4]={displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[6]};
-POINT3DH side7_5[4]={displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]};
-POINT3DH side7_6[4]={displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]};
+	Side side7_1(displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[1]);
+	Side side7_2(displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]);
+	Side side7_3(displayable_kocka7[4],displayable_kocka7[7],displayable_kocka7[6],displayable_kocka7[5]);
+	Side side7_4(displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]);
+	Side side7_5(displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]);
+	Side side7_6(displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[7]);
 
-	glColor3f(1.0,0.0,0.0);
+	
+
+	glColor3f(0.6,0.0,0.0);
 
 	//elso kocka elso oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_1[i].x,side1_1[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_1.tomb[i].x/side1_1.tomb[i].h,side1_1.tomb[i].y/side1_1.tomb[i].h);
+	}
 	glEnd();
 
 	//elso kocka masodik oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_2[i].x,side1_2[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_2.tomb[i].x/side1_2.tomb[i].h,side1_2.tomb[i].y/side1_2.tomb[i].h);
+	}
 	glEnd();
 
 	//elso kocka 3 oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_3[i].x,side1_3[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_3.tomb[i].x/side1_3.tomb[i].h,side1_3.tomb[i].y/side1_3.tomb[i].h);
+	}
 	glEnd();
 
 	//elso kocka 4 oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_4[i].x,side1_4[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_4.tomb[i].x/side1_4.tomb[i].h,side1_4.tomb[i].y/side1_4.tomb[i].h);
+	}
 	glEnd();
 
 	//elso kocka 5 oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_5[i].x,side1_5[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_5.tomb[i].x/side1_5.tomb[i].h,side1_5.tomb[i].y/side1_5.tomb[i].h);
+	}
 	glEnd();
 
 	//elso kocka 6 oldal
 	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side1_6[i].x,side1_6[i].y);
-		}
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_6.tomb[i].x/side1_6.tomb[i].h,side1_6.tomb[i].y/side1_6.tomb[i].h);
+	}
+	glEnd();
+
+
+	glColor3f(0.0,0.6,0.0);
+	//2 kocka elso oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_1.tomb[i].x/side2_1.tomb[i].h,side2_1.tomb[i].y/side2_1.tomb[i].h);
+	}
+	glEnd();
+
+	//2 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_2.tomb[i].x/side2_2.tomb[i].h,side2_2.tomb[i].y/side2_2.tomb[i].h);
+	}
+	glEnd();
+
+	//2 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_3.tomb[i].x/side2_3.tomb[i].h,side2_3.tomb[i].y/side2_3.tomb[i].h);
+	}
+	glEnd();
+
+	//2 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_4.tomb[i].x/side2_4.tomb[i].h,side2_4.tomb[i].y/side2_4.tomb[i].h);
+	}
+	glEnd();
+
+	//2 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_5.tomb[i].x/side2_5.tomb[i].h,side2_5.tomb[i].y/side2_5.tomb[i].h);
+	}
+	glEnd();
+
+	//2 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_6.tomb[i].x/side2_6.tomb[i].h,side2_6.tomb[i].y/side2_6.tomb[i].h);
+	}
+	glEnd();
+	glColor3f(0.0,0.0,0.6);
+	//3 kocka 1 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_1.tomb[i].x/side3_1.tomb[i].h,side3_1.tomb[i].y/side3_1.tomb[i].h);
+	}
+	glEnd();
+
+	//3 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_2.tomb[i].x/side3_2.tomb[i].h,side3_2.tomb[i].y/side3_2.tomb[i].h);
+	}
+	glEnd();
+
+	//3 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_3.tomb[i].x/side3_3.tomb[i].h,side3_3.tomb[i].y/side3_3.tomb[i].h);
+	}
+	glEnd();
+
+	//3 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_4.tomb[i].x/side3_4.tomb[i].h,side3_4.tomb[i].y/side3_4.tomb[i].h);
+	}
+	glEnd();
+
+	//3 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_5.tomb[i].x/side3_5.tomb[i].h,side3_5.tomb[i].y/side3_5.tomb[i].h);
+	}
+	glEnd();
+
+	//3 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_6.tomb[i].x/side3_6.tomb[i].h,side3_6.tomb[i].y/side3_6.tomb[i].h);
+	}
+	glEnd();
+	glColor3f(0.0,0.0,0.0);
+	//4 kocka elso oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_1.tomb[i].x/side4_1.tomb[i].h,side4_1.tomb[i].y/side4_1.tomb[i].h);
+	}
+	glEnd();
+
+	//4 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_2.tomb[i].x/side4_2.tomb[i].h,side4_2.tomb[i].y/side4_2.tomb[i].h);
+	}
+	glEnd();
+
+	//4 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_3.tomb[i].x/side4_3.tomb[i].h,side4_3.tomb[i].y/side4_3.tomb[i].h);
+	}
+	glEnd();
+
+	//4 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_4.tomb[i].x/side4_4.tomb[i].h,side4_4.tomb[i].y/side4_4.tomb[i].h);
+	}
+	glEnd();
+
+	//4 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_5.tomb[i].x/side4_5.tomb[i].h,side4_5.tomb[i].y/side4_5.tomb[i].h);
+	}
+	glEnd();
+
+	//4 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_6.tomb[i].x/side4_6.tomb[i].h,side4_6.tomb[i].y/side4_6.tomb[i].h);
+	}
+	glEnd();
+	glColor3f(0.6,0.0,0.6);
+	//5 kocka 1 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_1.tomb[i].x/side5_1.tomb[i].h,side5_1.tomb[i].y/side5_1.tomb[i].h);
+	}
+	glEnd();
+
+	//5 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_2.tomb[i].x/side5_2.tomb[i].h,side5_2.tomb[i].y/side5_2.tomb[i].h);
+	}
+	glEnd();
+
+	//5 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_3.tomb[i].x/side5_3.tomb[i].h,side5_3.tomb[i].y/side5_3.tomb[i].h);
+	}
+	glEnd();
+
+	//5 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_4.tomb[i].x/side5_4.tomb[i].h,side5_4.tomb[i].y/side5_4.tomb[i].h);
+	}
+	glEnd();
+
+	//5 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_5.tomb[i].x/side5_5.tomb[i].h,side5_5.tomb[i].y/side5_5.tomb[i].h);
+	}
+	glEnd();
+
+	//5 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_6.tomb[i].x/side5_6.tomb[i].h,side5_6.tomb[i].y/side5_6.tomb[i].h);
+	}
+	glEnd();
+	glColor3f(0.6,0.6,0.0);
+	//6 kocka 1 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_1.tomb[i].x/side6_1.tomb[i].h,side6_1.tomb[i].y/side6_1.tomb[i].h);
+	}
+	glEnd();
+
+	//6 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_2.tomb[i].x/side6_2.tomb[i].h,side6_2.tomb[i].y/side6_2.tomb[i].h);
+	}
+	glEnd();
+
+	//6 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_3.tomb[i].x/side6_3.tomb[i].h,side6_3.tomb[i].y/side6_3.tomb[i].h);
+	}
+	glEnd();
+
+	//6 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_4.tomb[i].x/side6_4.tomb[i].h,side6_4.tomb[i].y/side6_4.tomb[i].h);
+	}
+	glEnd();
+
+	//6 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_5.tomb[i].x/side6_5.tomb[i].h,side6_5.tomb[i].y/side6_5.tomb[i].h);
+	}
+	glEnd();
+
+	//6 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_6.tomb[i].x/side6_6.tomb[i].h,side6_6.tomb[i].y/side6_6.tomb[i].h);
+	}
+	glEnd();
+	glColor3f(0.0,0.6,0.6);
+	//7 kocka 1 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_1.tomb[i].x/side7_1.tomb[i].h,side7_1.tomb[i].y/side7_1.tomb[i].h);
+	}
+	glEnd();
+
+	//7 kocka 2 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_2.tomb[i].x/side7_2.tomb[i].h,side7_2.tomb[i].y/side7_2.tomb[i].h);
+	}
+	glEnd();
+
+	//7 kocka 3 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_3.tomb[i].x/side7_3.tomb[i].h,side7_3.tomb[i].y/side7_3.tomb[i].h);
+	}
+	glEnd();
+
+	//7 kocka 4 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_4.tomb[i].x/side7_4.tomb[i].h,side7_4.tomb[i].y/side7_4.tomb[i].h);
+	}
+	glEnd();
+
+	//7 kocka 5 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_5.tomb[i].x/side7_5.tomb[i].h,side7_5.tomb[i].y/side7_5.tomb[i].h);
+	}
+	glEnd();
+
+	//7 kocka 6 oldal
+	glBegin(GL_POLYGON);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_6.tomb[i].x/side7_6.tomb[i].h,side7_6.tomb[i].y/side7_6.tomb[i].h);
+	}
+	glEnd();
+
+	glColor3f(1.0,0.0,0.0);
+
+	//elso kocka elso oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_1.tomb[i].x/side1_1.tomb[i].h,side1_1.tomb[i].y/side1_1.tomb[i].h);
+	}
+	glEnd();
+
+	//elso kocka masodik oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_2.tomb[i].x/side1_2.tomb[i].h,side1_2.tomb[i].y/side1_2.tomb[i].h);
+	}
+	glEnd();
+
+	//elso kocka 3 oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_3.tomb[i].x/side1_3.tomb[i].h,side1_3.tomb[i].y/side1_3.tomb[i].h);
+	}
+	glEnd();
+
+	//elso kocka 4 oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_4.tomb[i].x/side1_4.tomb[i].h,side1_4.tomb[i].y/side1_4.tomb[i].h);
+	}
+	glEnd();
+
+	//elso kocka 5 oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_5.tomb[i].x/side1_5.tomb[i].h,side1_5.tomb[i].y/side1_5.tomb[i].h);
+	}
+	glEnd();
+
+	//elso kocka 6 oldal
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side1_6.tomb[i].x/side1_6.tomb[i].h,side1_6.tomb[i].y/side1_6.tomb[i].h);
+	}
 	glEnd();
 
 
 	glColor3f(0.0,1.0,0.0);
 	//2 kocka elso oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_1[i].x,side2_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_1.tomb[i].x/side2_1.tomb[i].h,side2_1.tomb[i].y/side2_1.tomb[i].h);
+	}
 	glEnd();
 
 	//2 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_2[i].x,side2_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_2.tomb[i].x/side2_2.tomb[i].h,side2_2.tomb[i].y/side2_2.tomb[i].h);
+	}
 	glEnd();
 
 	//2 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_3[i].x,side2_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_3.tomb[i].x/side2_3.tomb[i].h,side2_3.tomb[i].y/side2_3.tomb[i].h);
+	}
 	glEnd();
 
 	//2 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_4[i].x,side2_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_4.tomb[i].x/side2_4.tomb[i].h,side2_4.tomb[i].y/side2_4.tomb[i].h);
+	}
 	glEnd();
 
 	//2 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_5[i].x,side2_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_5.tomb[i].x/side2_5.tomb[i].h,side2_5.tomb[i].y/side2_5.tomb[i].h);
+	}
 	glEnd();
 
 	//2 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side2_6[i].x,side2_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side2_6.tomb[i].x/side2_6.tomb[i].h,side2_6.tomb[i].y/side2_6.tomb[i].h);
+	}
 	glEnd();
 	glColor3f(0.0,0.0,1.0);
 	//3 kocka 1 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_1[i].x,side3_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_1.tomb[i].x/side3_1.tomb[i].h,side3_1.tomb[i].y/side3_1.tomb[i].h);
+	}
 	glEnd();
 
 	//3 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_2[i].x,side3_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_2.tomb[i].x/side3_2.tomb[i].h,side3_2.tomb[i].y/side3_2.tomb[i].h);
+	}
 	glEnd();
 
 	//3 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_3[i].x,side3_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_3.tomb[i].x/side3_3.tomb[i].h,side3_3.tomb[i].y/side3_3.tomb[i].h);
+	}
 	glEnd();
 
 	//3 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_4[i].x,side3_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_4.tomb[i].x/side3_4.tomb[i].h,side3_4.tomb[i].y/side3_4.tomb[i].h);
+	}
 	glEnd();
 
 	//3 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_5[i].x,side3_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_5.tomb[i].x/side3_5.tomb[i].h,side3_5.tomb[i].y/side3_5.tomb[i].h);
+	}
 	glEnd();
 
 	//3 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side3_6[i].x,side3_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side3_6.tomb[i].x/side3_6.tomb[i].h,side3_6.tomb[i].y/side3_6.tomb[i].h);
+	}
 	glEnd();
 	glColor3f(0.0,0.0,0.0);
 	//4 kocka elso oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_1[i].x,side4_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_1.tomb[i].x/side4_1.tomb[i].h,side4_1.tomb[i].y/side4_1.tomb[i].h);
+	}
 	glEnd();
 
 	//4 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_2[i].x,side4_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_2.tomb[i].x/side4_2.tomb[i].h,side4_2.tomb[i].y/side4_2.tomb[i].h);
+	}
 	glEnd();
 
 	//4 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_3[i].x,side4_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_3.tomb[i].x/side4_3.tomb[i].h,side4_3.tomb[i].y/side4_3.tomb[i].h);
+	}
 	glEnd();
 
 	//4 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_4[i].x,side4_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_4.tomb[i].x/side4_4.tomb[i].h,side4_4.tomb[i].y/side4_4.tomb[i].h);
+	}
 	glEnd();
 
 	//4 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_5[i].x,side4_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_5.tomb[i].x/side4_5.tomb[i].h,side4_5.tomb[i].y/side4_5.tomb[i].h);
+	}
 	glEnd();
 
 	//4 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side4_6[i].x,side4_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side4_6.tomb[i].x/side4_6.tomb[i].h,side4_6.tomb[i].y/side4_6.tomb[i].h);
+	}
 	glEnd();
 	glColor3f(1.0,0.0,1.0);
 	//5 kocka 1 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_1[i].x,side5_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_1.tomb[i].x/side5_1.tomb[i].h,side5_1.tomb[i].y/side5_1.tomb[i].h);
+	}
 	glEnd();
 
 	//5 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_2[i].x,side5_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_2.tomb[i].x/side5_2.tomb[i].h,side5_2.tomb[i].y/side5_2.tomb[i].h);
+	}
 	glEnd();
 
 	//5 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_3[i].x,side5_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_3.tomb[i].x/side5_3.tomb[i].h,side5_3.tomb[i].y/side5_3.tomb[i].h);
+	}
 	glEnd();
 
 	//5 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_4[i].x,side5_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_4.tomb[i].x/side5_4.tomb[i].h,side5_4.tomb[i].y/side5_4.tomb[i].h);
+	}
 	glEnd();
 
 	//5 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_5[i].x,side5_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_5.tomb[i].x/side5_5.tomb[i].h,side5_5.tomb[i].y/side5_5.tomb[i].h);
+	}
 	glEnd();
 
 	//5 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side5_6[i].x,side5_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side5_6.tomb[i].x/side5_6.tomb[i].h,side5_6.tomb[i].y/side5_6.tomb[i].h);
+	}
 	glEnd();
 	glColor3f(1.0,1.0,0.0);
 	//6 kocka 1 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_1[i].x,side6_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_1.tomb[i].x/side6_1.tomb[i].h,side6_1.tomb[i].y/side6_1.tomb[i].h);
+	}
 	glEnd();
 
 	//6 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_2[i].x,side6_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_2.tomb[i].x/side6_2.tomb[i].h,side6_2.tomb[i].y/side6_2.tomb[i].h);
+	}
 	glEnd();
 
 	//6 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_3[i].x,side6_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_3.tomb[i].x/side6_3.tomb[i].h,side6_3.tomb[i].y/side6_3.tomb[i].h);
+	}
 	glEnd();
 
 	//6 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_4[i].x,side6_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_4.tomb[i].x/side6_4.tomb[i].h,side6_4.tomb[i].y/side6_4.tomb[i].h);
+	}
 	glEnd();
 
 	//6 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_5[i].x,side6_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_5.tomb[i].x/side6_5.tomb[i].h,side6_5.tomb[i].y/side6_5.tomb[i].h);
+	}
 	glEnd();
 
 	//6 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side6_6[i].x,side6_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side6_6.tomb[i].x/side6_6.tomb[i].h,side6_6.tomb[i].y/side6_6.tomb[i].h);
+	}
 	glEnd();
 	glColor3f(0.0,1.0,1.0);
 	//7 kocka 1 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_1[i].x,side7_1[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_1.tomb[i].x/side7_1.tomb[i].h,side7_1.tomb[i].y/side7_1.tomb[i].h);
+	}
 	glEnd();
 
 	//7 kocka 2 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_2[i].x,side7_2[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_2.tomb[i].x/side7_2.tomb[i].h,side7_2.tomb[i].y/side7_2.tomb[i].h);
+	}
 	glEnd();
 
 	//7 kocka 3 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_3[i].x,side7_3[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_3.tomb[i].x/side7_3.tomb[i].h,side7_3.tomb[i].y/side7_3.tomb[i].h);
+	}
 	glEnd();
 
 	//7 kocka 4 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_4[i].x,side7_4[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_4.tomb[i].x/side7_4.tomb[i].h,side7_4.tomb[i].y/side7_4.tomb[i].h);
+	}
 	glEnd();
 
 	//7 kocka 5 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_5[i].x,side7_5[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_5.tomb[i].x/side7_5.tomb[i].h,side7_5.tomb[i].y/side7_5.tomb[i].h);
+	}
 	glEnd();
 
 	//7 kocka 6 oldal
-	glBegin(GL_POLYGON);
-		for(GLint i=0;i<4;i++){
-			glVertex2d(side7_6[i].x,side7_6[i].y);
-		}
+	glBegin(GL_LINE_LOOP);
+	for(GLint i=0;i<4;i++){
+		glVertex2d(side7_6.tomb[i].x/side7_6.tomb[i].h,side7_6.tomb[i].y/side7_6.tomb[i].h);
+	}
 	glEnd();
 
 	glutPostRedisplay();
@@ -708,67 +963,59 @@ int main (int argc, char** argv) {
 	kocka1[6] = initPoint3dh(-0.5,-0.5,0.5);
 	kocka1[7] = initPoint3dh(0.5,-0.5,0.5);
 
-	kocka2[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka2[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka2[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka2[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka2[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka2[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka2[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka2[7] = initPoint3dh(0.5,-0.5,0.5);
+	kocka2[0] = initPoint3dh(0.5,0.5+2,-0.5);
+	kocka2[1] = initPoint3dh(-0.5,0.5+2,-0.5);
+	kocka2[2] = initPoint3dh(-0.5,-0.5+2,-0.5);
+	kocka2[3] = initPoint3dh(0.5,-0.5+2,-0.5);
+	kocka2[4] = initPoint3dh(0.5,0.5+2,0.5);
+	kocka2[5] = initPoint3dh(-0.5,0.5+2,0.5);
+	kocka2[6] = initPoint3dh(-0.5,-0.5+2,0.5);
+	kocka2[7] = initPoint3dh(0.5,-0.5+2,0.5);
 
-	kocka3[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka3[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka3[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka3[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka3[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka3[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka3[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka3[7] = initPoint3dh(0.5,-0.5,0.5);
+	kocka3[0] = initPoint3dh(0.5,0.5-2,-0.5);
+	kocka3[1] = initPoint3dh(-0.5,0.5-2,-0.5);
+	kocka3[2] = initPoint3dh(-0.5,-0.5-2,-0.5);
+	kocka3[3] = initPoint3dh(0.5,-0.5-2,-0.5);
+	kocka3[4] = initPoint3dh(0.5,0.5-2,0.5);
+	kocka3[5] = initPoint3dh(-0.5,0.5-2,0.5);
+	kocka3[6] = initPoint3dh(-0.5,-0.5-2,0.5);
+	kocka3[7] = initPoint3dh(0.5,-0.5-2,0.5);
 
-	kocka4[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka4[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka4[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka4[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka4[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka4[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka4[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka4[7] = initPoint3dh(0.5,-0.5,0.5);
+	kocka4[0] = initPoint3dh(0.5-2,0.5,-0.5);
+	kocka4[1] = initPoint3dh(-0.5-2,0.5,-0.5);
+	kocka4[2] = initPoint3dh(-0.5-2,-0.5,-0.5);
+	kocka4[3] = initPoint3dh(0.5-2,-0.5,-0.5);
+	kocka4[4] = initPoint3dh(0.5-2,0.5,0.5);
+	kocka4[5] = initPoint3dh(-0.5-2,0.5,0.5);
+	kocka4[6] = initPoint3dh(-0.5-2,-0.5,0.5);
+	kocka4[7] = initPoint3dh(0.5-2,-0.5,0.5);
 
-	kocka5[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka5[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka5[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka5[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka5[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka5[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka5[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka5[7] = initPoint3dh(0.5,-0.5,0.5);
+	kocka5[0] = initPoint3dh(0.5+2,0.5,-0.5);
+	kocka5[1] = initPoint3dh(-0.5+2,0.5,-0.5);
+	kocka5[2] = initPoint3dh(-0.5+2,-0.5,-0.5);
+	kocka5[3] = initPoint3dh(0.5+2,-0.5,-0.5);
+	kocka5[4] = initPoint3dh(0.5+2,0.5,0.5);
+	kocka5[5] = initPoint3dh(-0.5+2,0.5,0.5);
+	kocka5[6] = initPoint3dh(-0.5+2,-0.5,0.5);
+	kocka5[7] = initPoint3dh(0.5+2,-0.5,0.5);
 
-	kocka6[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka6[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka6[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka6[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka6[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka6[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka6[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka6[7] = initPoint3dh(0.5,-0.5,0.5);
+	kocka6[0] = initPoint3dh(0.5,0.5,-0.5-2);
+	kocka6[1] = initPoint3dh(-0.5,0.5,-0.5-2);
+	kocka6[2] = initPoint3dh(-0.5,-0.5,-0.5-2);
+	kocka6[3] = initPoint3dh(0.5,-0.5,-0.5-2);
+	kocka6[4] = initPoint3dh(0.5,0.5,0.5-2);
+	kocka6[5] = initPoint3dh(-0.5,0.5,0.5-2);
+	kocka6[6] = initPoint3dh(-0.5,-0.5,0.5-2);
+	kocka6[7] = initPoint3dh(0.5,-0.5,0.5-2);
 
-	kocka7[0] = initPoint3dh(0.5,0.5,-0.5);
-	kocka7[1] = initPoint3dh(-0.5,0.5,-0.5);
-	kocka7[2] = initPoint3dh(-0.5,-0.5,-0.5);
-	kocka7[3] = initPoint3dh(0.5,-0.5,-0.5);
-	kocka7[4] = initPoint3dh(0.5,0.5,0.5);
-	kocka7[5] = initPoint3dh(-0.5,0.5,0.5);
-	kocka7[6] = initPoint3dh(-0.5,-0.5,0.5);
-	kocka7[7] = initPoint3dh(0.5,-0.5,0.5);
-
-	kockaeltol(kocka1,eltol1);
-	kockaeltol(kocka2,eltol2);
-	kockaeltol(kocka3,eltol3);
-	kockaeltol(kocka4,eltol4);
-	kockaeltol(kocka5,eltol5);
-	kockaeltol(kocka6,eltol6);
-	kockaeltol(kocka7,eltol7);
+	kocka7[0] = initPoint3dh(0.5,0.5,-0.5+2);
+	kocka7[1] = initPoint3dh(-0.5,0.5,-0.5+2);
+	kocka7[2] = initPoint3dh(-0.5,-0.5,-0.5+2);
+	kocka7[3] = initPoint3dh(0.5,-0.5,-0.5+2);
+	kocka7[4] = initPoint3dh(0.5,0.5,0.5+2);
+	kocka7[5] = initPoint3dh(-0.5,0.5,0.5+2);
+	kocka7[6] = initPoint3dh(-0.5,-0.5,0.5+2);
+	kocka7[7] = initPoint3dh(0.5,-0.5,0.5+2);
 
 	std::cout << "| " << kocka2[0].x << std::endl;
 
