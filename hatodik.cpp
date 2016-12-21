@@ -65,24 +65,6 @@ void kockaeltol(POINT3DH kocka[8], GLdouble eltol[3]){
 	}
 }
 
-POINT3D Sidemidp(Side G){
-	POINT3D A;
-	for(GLint i=0;i<4;i++){
-		A.x+=G.tomb[i].x;
-		A.y+=G.tomb[i].y;
-		A.z+=G.tomb[i].z;
-	}
-	A.x=A.x/4;
-	A.y=A.y/4;
-	A.z=A.z/4;
-	return A;
-}
-
-bool which_closest(Side qwe, Side asd){
-
-	hossz()
-}
-
 POINT3D initPoint3d(GLdouble x, GLdouble y, GLdouble z){
 	POINT3D P;
 	P.x = x;
@@ -90,6 +72,8 @@ POINT3D initPoint3d(GLdouble x, GLdouble y, GLdouble z){
 	P.z = z;
 	return P;
 }
+
+POINT3D centrum = initPoint3d(0, 0, s);
 
 POINT3D C = initPoint3d (5,0,0);
 POINT3D P = initPoint3d (0,0,0);
@@ -267,6 +251,42 @@ void createTmp2(){
 			temp2[i][j]=0;
 		}
 	}
+}
+
+POINT3D Sidemidp(Side G){
+	POINT3D A;
+	for(GLint i=0;i<4;i++){
+		A.x+=G.tomb[i].x;
+		A.y+=G.tomb[i].y;
+		A.z+=G.tomb[i].z;
+	}
+	A.x=A.x/4;
+	A.y=A.y/4;
+	A.z=A.z/4;
+	return A;
+}
+
+bool which_further(Side qwe, Side asd){
+	POINT3D Q=Sidemidp(qwe);
+	POINT3D A=Sidemidp(asd);
+	Q.x-=C.x;
+	Q.y-=C.y;
+	Q.z-=C.z;
+	A.x-=C.x;
+	A.y-=C.y;
+	A.z-=C.z;
+	return (hossz(A) > hossz(Q));
+}
+
+bool YesorNo(Side Q){
+	double tmp;
+	POINT3D W=initPoint3d((centrum.x - Sidemidp(Q).x),(centrum.y - Sidemidp(Q).y),(centrum.z - Sidemidp(Q).z));
+	POINT3D AS=initPoint3d((Q.tomb[1].x-Q.tomb[0].x),(Q.tomb[1].y-Q.tomb[0].y),(Q.tomb[1].z-Q.tomb[0].z));
+	POINT3D AD=initPoint3d((Q.tomb[2].x-Q.tomb[0].x),(Q.tomb[2].y-Q.tomb[0].y),(Q.tomb[2].z-Q.tomb[0].z));
+	POINT3D ASxAD=vektmul(AS,AD);
+	tmp=ASxAD.x*W.x + ASxAD.y*W.y + ASxAD.z*W.z;
+											 
+	return (tmp < 0);
 }
 
 void Display(){
