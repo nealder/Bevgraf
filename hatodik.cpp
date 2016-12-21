@@ -28,7 +28,7 @@ public:
 
 	}
 	~Side(){
-		
+
 	}
 };
 
@@ -146,12 +146,12 @@ void keyUp (unsigned char key, int x, int y) {
 
 void keyOperations ( ) {
 	if(keyStates['w']){
-		if(C.z<=10 && C.z>=-10){
+		if(C.z+deltaf<=10 ){
 			C.z+=deltaf;
 		}		
 	}
 	if(keyStates['s']){
-		if(C.z<=10 && C.z>=-10){
+		if(C.z-deltaf>=-10){
 			C.z-=deltaf;
 		}		
 	}
@@ -272,15 +272,10 @@ POINT3D Sidemidp(Side G){
 }
 
 bool which_further(Side qwe, Side asd){
-	POINT3D Q=Sidemidp(qwe);
-	POINT3D A=Sidemidp(asd);
-	Q.x-=C.x;
-	Q.y-=C.y;
-	Q.z-=C.z;
-	A.x-=C.x;
-	A.y-=C.y;
-	A.z-=C.z;
-	return (hossz(A) > hossz(Q));
+	POINT3D Q=initPoint3d(0-Sidemidp(qwe).x,0-Sidemidp(qwe).y,0-Sidemidp(qwe).z);
+	POINT3D A=initPoint3d(0-Sidemidp(asd).x,0-Sidemidp(asd).y,0-Sidemidp(asd).z);
+	
+	return (sqrt(Q.x*Q.x + Q.y*Q.y + Q.z*Q.z) > sqrt(A.x*A.x + A.y*A.y + A.z*A.z));
 }
 
 bool YesorNo(Side Q){
@@ -372,13 +367,13 @@ void Display(){
 	Side side7_6(displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[7]);
 	//elso 
 	allSide.push_back(side1_1);
-	allSide.push_back(side1_1);
-	allSide.push_back(side1_1);
-	allSide.push_back(side1_1);
-	allSide.push_back(side1_1);
-	allSide.push_back(side1_1);
+	allSide.push_back(side1_2);
+	allSide.push_back(side1_3);
+	allSide.push_back(side1_4);
+	allSide.push_back(side1_5);
+	allSide.push_back(side1_6);
 	//masodik
-	allSide.push_back(side1_1);
+	allSide.push_back(side2_1);
 	allSide.push_back(side2_2);
 	allSide.push_back(side2_3);
 	allSide.push_back(side2_4);
@@ -392,7 +387,7 @@ void Display(){
 	allSide.push_back(side3_5);
 	allSide.push_back(side3_6);
 //negyedik
-	allSide.push_back(side1_1);
+	allSide.push_back(side4_1);
 	allSide.push_back(side4_2);
 	allSide.push_back(side4_3);
 	allSide.push_back(side4_4);
@@ -422,7 +417,7 @@ void Display(){
 
 
 	for(auto it = allSide.begin();it != allSide.end();  ){
-		if(YesorNo((*it))){
+		if(YesorNo(*it)){
 			it = allSide.erase(it);
 		}
 		else{
@@ -435,11 +430,12 @@ void Display(){
 	glColor3f(0.6,0.0,0.0);
 
 	for( auto it =allSide.begin() ; it != allSide.end(); it++){
-		for(GLint i=0;i<4;i++){
+		
 			glBegin(GL_POLYGON);
-			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+			for(GLint i=0;i<4;i++){
+				glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+			}
 			glEnd();
-		}
 	}
 
 	//elso kocka elso oldal
@@ -447,7 +443,7 @@ void Display(){
 	for(GLint i=0;i<4;i++){
 		glVertex2d(side1_1.tomb[i].x/side1_1.tomb[i].h,side1_1.tomb[i].y/side1_1.tomb[i].h);
 	}
-	glEnd();*/
+	glEnd();
 
 	//elso kocka masodik oldal
 	glBegin(GL_POLYGON);
@@ -1034,7 +1030,17 @@ void Display(){
 	for(GLint i=0;i<4;i++){
 		glVertex2d(side7_6.tomb[i].x/side7_6.tomb[i].h,side7_6.tomb[i].y/side7_6.tomb[i].h);
 	}
-	glEnd();
+	glEnd();*/
+
+	for( auto it =allSide.begin() ; it != allSide.end(); it++){
+		
+			glBegin(GL_LINE_LOOP);
+			for(GLint i=0;i<4;i++){
+				glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+			}
+			glEnd();
+			
+	}
 
 	glutPostRedisplay();
 	glutSwapBuffers();
