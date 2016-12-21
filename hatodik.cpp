@@ -2,6 +2,7 @@
 #include <math.h>
 #include <iostream>
 #include <list>
+#include <algorithm>
 #include <vector>
 GLint keyStates[256];
 #define PI 3.141592653589793
@@ -23,6 +24,11 @@ public:
 		this->tomb[1]=b;
 		this->tomb[2]=c;
 		this->tomb[3]=d;
+
+
+	}
+	~Side(){
+		
 	}
 };
 
@@ -55,7 +61,6 @@ POINT3DH displayable_kocka4[8];
 POINT3DH displayable_kocka5[8];
 POINT3DH displayable_kocka6[8];
 POINT3DH displayable_kocka7[8];
-std::vector<Side> allSide;
 
 void kockaeltol(POINT3DH kocka[8], GLdouble eltol[3]){
 	for(GLint i=0; i<8 ;i++){
@@ -186,16 +191,16 @@ void createKMatrix(){
 	}
 	POINT3D PC = initPoint3d(-(P.x-C.x),-(P.y-C.y),-(P.z-C.z));
 	POINT3D W = initPoint3d (PC.x / hossz(PC),
-							PC.y / hossz(PC),
-							PC.z / hossz(PC));
+		PC.y / hossz(PC),
+		PC.z / hossz(PC));
 
 	POINT3D U = initPoint3d ((vektmul(up,W).x/hossz(vektmul(up,W))),
-							(vektmul(up,W).y/hossz(vektmul(up,W))),
-							(vektmul(up,W).z/hossz(vektmul(up,W))));
+		(vektmul(up,W).y/hossz(vektmul(up,W))),
+		(vektmul(up,W).z/hossz(vektmul(up,W))));
 
 	POINT3D V = initPoint3d ((vektmul(W,U).x) / hossz(vektmul(W,U)), 
-							(vektmul(W,U).y) / hossz(vektmul(W,U)), 
-							(vektmul(W,U).z) / hossz(vektmul(W,U)));
+		(vektmul(W,U).y) / hossz(vektmul(W,U)), 
+		(vektmul(W,U).z) / hossz(vektmul(W,U)));
 
 	K[0][0]=U.x;
 	K[0][1]=U.y;
@@ -285,11 +290,13 @@ bool YesorNo(Side Q){
 	POINT3D AD=initPoint3d((Q.tomb[2].x-Q.tomb[0].x),(Q.tomb[2].y-Q.tomb[0].y),(Q.tomb[2].z-Q.tomb[0].z));
 	POINT3D ASxAD=vektmul(AS,AD);
 	tmp=ASxAD.x*W.x + ASxAD.y*W.y + ASxAD.z*W.z;
-											 
+
 	return (tmp < 0);
 }
 
 void Display(){
+
+	std::vector<Side> allSide;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0,0.0,0.0);
@@ -363,17 +370,84 @@ void Display(){
 	Side side7_4(displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]);
 	Side side7_5(displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]);
 	Side side7_6(displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[7]);
+	//elso 
+	allSide.push_back(side1_1);
+	allSide.push_back(side1_1);
+	allSide.push_back(side1_1);
+	allSide.push_back(side1_1);
+	allSide.push_back(side1_1);
+	allSide.push_back(side1_1);
+	//masodik
+	allSide.push_back(side1_1);
+	allSide.push_back(side2_2);
+	allSide.push_back(side2_3);
+	allSide.push_back(side2_4);
+	allSide.push_back(side2_5);
+	allSide.push_back(side2_6);
+//harmadik
+	allSide.push_back(side3_1);
+	allSide.push_back(side3_2);
+	allSide.push_back(side3_3);
+	allSide.push_back(side3_4);
+	allSide.push_back(side3_5);
+	allSide.push_back(side3_6);
+//negyedik
+	allSide.push_back(side1_1);
+	allSide.push_back(side4_2);
+	allSide.push_back(side4_3);
+	allSide.push_back(side4_4);
+	allSide.push_back(side4_5);
+	allSide.push_back(side4_6);
+//otodik
+	allSide.push_back(side5_1);
+	allSide.push_back(side5_2);
+	allSide.push_back(side5_3);
+	allSide.push_back(side5_4);
+	allSide.push_back(side5_5);
+	allSide.push_back(side5_6);
+//hatodik
+	allSide.push_back(side6_1);
+	allSide.push_back(side6_2);
+	allSide.push_back(side6_3);
+	allSide.push_back(side6_4);
+	allSide.push_back(side6_5);
+	allSide.push_back(side6_6);
+//hetedik
+	allSide.push_back(side7_1);
+	allSide.push_back(side7_2);
+	allSide.push_back(side7_3);
+	allSide.push_back(side7_4);
+	allSide.push_back(side7_5);
+	allSide.push_back(side7_6);
 
-	
+
+	for(auto it = allSide.begin();it != allSide.end();  ){
+		if(YesorNo((*it))){
+			it = allSide.erase(it);
+		}
+		else{
+			it++;
+		}
+	}//
+	//std::qsort...
+	std::sort( allSide.begin(), allSide.end(), which_further);  
 
 	glColor3f(0.6,0.0,0.0);
 
+	for( auto it =allSide.begin() ; it != allSide.end(); it++){
+		for(GLint i=0;i<4;i++){
+			glBegin(GL_POLYGON);
+			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+			glEnd();
+		}
+	}
+
 	//elso kocka elso oldal
-	glBegin(GL_POLYGON);
+	/*glBegin(GL_POLYGON);
 	for(GLint i=0;i<4;i++){
 		glVertex2d(side1_1.tomb[i].x/side1_1.tomb[i].h,side1_1.tomb[i].y/side1_1.tomb[i].h);
 	}
-	glEnd();
+	glEnd();*/
 
 	//elso kocka masodik oldal
 	glBegin(GL_POLYGON);
