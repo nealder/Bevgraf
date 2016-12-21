@@ -1,7 +1,6 @@
 #include <GL/glut.h>
 #include <math.h>
 #include <iostream>
-#include <list>
 #include <algorithm>
 #include <vector>
 GLint keyStates[256];
@@ -25,9 +24,6 @@ public:
 		this->tomb[2]=c;
 		this->tomb[3]=d;
 
-
-	}
-	~Side(){
 
 	}
 };
@@ -78,9 +74,9 @@ POINT3D initPoint3d(GLdouble x, GLdouble y, GLdouble z){
 	return P;
 }
 
-POINT3D centrum = initPoint3d(0, 0, s);
+POINT3D center = initPoint3d(0, 0, s);
 
-POINT3D C = initPoint3d (5,0,0);
+POINT3D C = initPoint3d (4,0,0);
 POINT3D P = initPoint3d (0,0,0);
 POINT3D up = initPoint3d (0, 0.0, 1.0);
 POINT3D PCinit = initPoint3d(-(P.x-C.x),-(P.y-C.y),-(P.z-C.z));
@@ -130,6 +126,19 @@ POINT3D vektmul(POINT3D A, POINT3D B){
 	P.y = A.z*B.x - A.x*B.z;
 	P.z = A.x*B.y - A.y*B.x;
 	return P;
+}
+
+GLdouble belsoszorzat(POINT3D A, POINT3D B){
+	return (A.x*B.x + A.y*B.y + A.z*B.z);
+}
+
+POINT3D normalvektor(Side Q){
+	POINT3D A = initPoint3d(Q.tomb[0].x,Q.tomb[0].y,Q.tomb[0].z);
+	POINT3D S = initPoint3d(Q.tomb[1].x,Q.tomb[1].y,Q.tomb[1].z);
+	POINT3D D = initPoint3d(Q.tomb[2].x,Q.tomb[2].y,Q.tomb[2].z);
+	POINT3D ASv = initPoint3d((S.x-A.x),(S.y-A.y),(S.z-A.z));
+	POINT3D ADv = initPoint3d((D.x-A.x),(D.y-A.y),(D.z-A.z));
+	return vektmul(ASv,ADv);
 }
 
 GLdouble hossz(POINT3D A){
@@ -260,38 +269,40 @@ void createTmp2(){
 
 POINT3D Sidemidp(Side G){
 	POINT3D A;
-	for(GLint i=0;i<4;i++){
-		A.x+=G.tomb[i].x;
-		A.y+=G.tomb[i].y;
-		A.z+=G.tomb[i].z;
-	}
-	A.x=A.x/4;
-	A.y=A.y/4;
-	A.z=A.z/4;
+	A.x=(G.tomb[0].x+G.tomb[1].x+G.tomb[2].x+G.tomb[3].x)/4;
+	A.y=(G.tomb[0].y+G.tomb[1].y+G.tomb[2].y+G.tomb[3].y)/4;
+	A.z=(G.tomb[0].z+G.tomb[1].z+G.tomb[2].z+G.tomb[3].z)/4;
 	return A;
 }
 
-bool which_further(Side qwe, Side asd){
-	POINT3D Q=initPoint3d(0-Sidemidp(qwe).x,0-Sidemidp(qwe).y,0-Sidemidp(qwe).z);
-	POINT3D A=initPoint3d(0-Sidemidp(asd).x,0-Sidemidp(asd).y,0-Sidemidp(asd).z);
-	
-	return (sqrt(Q.x*Q.x + Q.y*Q.y + Q.z*Q.z) > sqrt(A.x*A.x + A.y*A.y + A.z*A.z));
+bool is_further(Side qwe, Side asd){
+	POINT3D Q=Sidemidp(qwe);
+	POINT3D A=Sidemidp(asd);
+	POINT3D Qv=initPoint3d(0-Q.x,0-Q.y,0-Q.z);
+	POINT3D Av=initPoint3d(0-A.x,0-A.y,0-A.z);
+
+	//POINT3D Q=initPoint3d(0-Sidemidp(qwe).x,0-Sidemidp(qwe).y,0-Sidemidp(qwe).z);
+	//POINT3D A=initPoint3d(0-Sidemidp(asd).x,0-Sidemidp(asd).y,0-Sidemidp(asd).z);
+	GLdouble qv=sqrt(belsoszorzat(Qv,Qv));
+	GLdouble av=sqrt(belsoszorzat(Av,Av));
+	return (qv < av);
 }
 
 bool YesorNo(Side Q){
-	double tmp;
-	POINT3D W=initPoint3d((centrum.x - Sidemidp(Q).x),(centrum.y - Sidemidp(Q).y),(centrum.z - Sidemidp(Q).z));
-	POINT3D AS=initPoint3d((Q.tomb[1].x-Q.tomb[0].x),(Q.tomb[1].y-Q.tomb[0].y),(Q.tomb[1].z-Q.tomb[0].z));
-	POINT3D AD=initPoint3d((Q.tomb[2].x-Q.tomb[0].x),(Q.tomb[2].y-Q.tomb[0].y),(Q.tomb[2].z-Q.tomb[0].z));
-	POINT3D ASxAD=vektmul(AS,AD);
-	tmp=ASxAD.x*W.x + ASxAD.y*W.y + ASxAD.z*W.z;
+	GLdouble tmp;
+	POINT3D W=initPoint3d((center.x - Sidemidp(Q).x),(center.y - Sidemidp(Q).y),(center.z - Sidemidp(Q).z));
+	
+	//POINT3D AS=initPoint3d((Q.tomb[1].x-Q.tomb[0].x),(Q.tomb[1].y-Q.tomb[0].y),(Q.tomb[1].z-Q.tomb[0].z));
+	//POINT3D AD=initPoint3d((Q.tomb[2].x-Q.tomb[0].x),(Q.tomb[2].y-Q.tomb[0].y),(Q.tomb[2].z-Q.tomb[0].z));
+	//POINT3D ASxAD=vektmul(AS,AD);
+	tmp=belsoszorzat( normalvektor(Q), W);
 
 	return (tmp < 0);
 }
 
 void Display(){
 
-	std::vector<Side> allSide;
+
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0,0.0,0.0);
@@ -365,6 +376,8 @@ void Display(){
 	Side side7_4(displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]);
 	Side side7_5(displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]);
 	Side side7_6(displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[7]);
+	
+	std::vector<Side> allSide;
 	//elso 
 	allSide.push_back(side1_1);
 	allSide.push_back(side1_2);
@@ -417,25 +430,37 @@ void Display(){
 
 
 	for(auto it = allSide.begin();it != allSide.end();  ){
-		if(YesorNo(*it)){
+		if(YesorNo((*it))){
 			it = allSide.erase(it);
 		}
 		else{
 			it++;
 		}
-	}//
-	//std::qsort...
-	std::sort( allSide.begin(), allSide.end(), which_further);  
+	}
+	
+	std::sort( allSide.begin(), allSide.end(), is_further);  
 
 	glColor3f(0.6,0.0,0.0);
 
 	for( auto it =allSide.begin() ; it != allSide.end(); it++){
+
+		glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+		}
+		glEnd();
+	}
+
+	glColor3f(1.0,0.0,0.0);
+
+	for( auto it =allSide.begin() ; it != allSide.end(); it++){
 		
-			glBegin(GL_POLYGON);
-			for(GLint i=0;i<4;i++){
-				glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
-			}
-			glEnd();
+		glBegin(GL_LINE_LOOP);
+		for(GLint i=0;i<4;i++){
+			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+		}
+		glEnd();
+
 	}
 
 	//elso kocka elso oldal
@@ -1032,17 +1057,8 @@ void Display(){
 	}
 	glEnd();*/
 
-	for( auto it =allSide.begin() ; it != allSide.end(); it++){
-		
-			glBegin(GL_LINE_LOOP);
-			for(GLint i=0;i<4;i++){
-				glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
-			}
-			glEnd();
-			
-	}
+	
 
-	glutPostRedisplay();
 	glutSwapBuffers();
 }
 
@@ -1116,8 +1132,6 @@ int main (int argc, char** argv) {
 	kocka7[5] = initPoint3dh(-0.5,0.5,0.5+2);
 	kocka7[6] = initPoint3dh(-0.5,-0.5,0.5+2);
 	kocka7[7] = initPoint3dh(0.5,-0.5,0.5+2);
-
-	std::cout << "| " << kocka2[0].x << std::endl;
 
 	glutInit (&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
