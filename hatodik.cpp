@@ -16,13 +16,15 @@ class Side{
 public:
 
 	POINT3DH tomb[4];
+	POINT3D asd;
 
-	Side(POINT3DH a,POINT3DH b,POINT3DH c,POINT3DH d){
+	Side(POINT3DH a,POINT3DH b,POINT3DH c,POINT3DH d, POINT3D asd){
 		
 		this->tomb[0]=a;
 		this->tomb[1]=b;
 		this->tomb[2]=c;
 		this->tomb[3]=d;
+		this->asd=asd;
 
 
 	}
@@ -285,7 +287,7 @@ bool is_further(Side qwe, Side asd){
 
 	//std::cout << "qv = " << qv << std::endl << "av = " << av << std::endl;
 
-	return (qv < av);
+	return (qv > av);
 }
 
 bool YesorNo(Side Q){
@@ -297,7 +299,7 @@ bool YesorNo(Side Q){
 	//POINT3D ASxAD=vektmul(AS,AD);
 	tmp=belsoszorzat( normalvektor(Q), W);
 
-	std::cout<< " Q0.x = " << Q.tomb[0].x << " Q0.y = " << Q.tomb[0].y << " Q0.z = " << Q.tomb[0].z << std::endl;
+	//std::cout<< " Q0.x = " << Q.tomb[0].x << " Q0.y = " << Q.tomb[0].y << " Q0.z = " << Q.tomb[0].z << std::endl;
 
 	return (tmp < 0);
 }
@@ -315,67 +317,67 @@ void Display(){
 	createTmp1();
 	createTmp2();
 
-	mul_matrices(VC,K,temp1);
-	mul_matrices(WtV,temp1,temp2);
+	
+	mul_matrices(WtV,VC,temp2);
 
 	for(GLint i=0 ; i<8 ; i++){
-		displayable_kocka1[i]=transzform(temp2,kocka1[i]);
-		displayable_kocka2[i]=transzform(temp2,kocka2[i]);
-		displayable_kocka3[i]=transzform(temp2,kocka3[i]);
-		displayable_kocka4[i]=transzform(temp2,kocka4[i]);
-		displayable_kocka5[i]=transzform(temp2,kocka5[i]);
-		displayable_kocka6[i]=transzform(temp2,kocka6[i]);
-		displayable_kocka7[i]=transzform(temp2,kocka7[i]);
+		displayable_kocka1[i]=transzform(K,kocka1[i]);
+		displayable_kocka2[i]=transzform(K,kocka2[i]);
+		displayable_kocka3[i]=transzform(K,kocka3[i]);
+		displayable_kocka4[i]=transzform(K,kocka4[i]);
+		displayable_kocka5[i]=transzform(K,kocka5[i]);
+		displayable_kocka6[i]=transzform(K,kocka6[i]);
+		displayable_kocka7[i]=transzform(K,kocka7[i]);
 	}
 
-	Side side1_1(displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[1]);
-	Side side1_2(displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[4]);
-	Side side1_3(displayable_kocka1[4],displayable_kocka1[7],displayable_kocka1[6],displayable_kocka1[5]);
-	Side side1_4(displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5]);
-	Side side1_5(displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4]);
-	Side side1_6(displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[7]);
+	Side side1_1(displayable_kocka1[0],displayable_kocka1[3],displayable_kocka1[2],displayable_kocka1[1],initPoint3d(1,0,0));
+	Side side1_2(displayable_kocka1[0],displayable_kocka1[4],displayable_kocka1[7],displayable_kocka1[3],initPoint3d(1,0,0));
+	Side side1_3(displayable_kocka1[4],displayable_kocka1[5],displayable_kocka1[6],displayable_kocka1[7],initPoint3d(1,0,0));
+	Side side1_4(displayable_kocka1[1],displayable_kocka1[2],displayable_kocka1[6],displayable_kocka1[5],initPoint3d(1,0,0));
+	Side side1_5(displayable_kocka1[0],displayable_kocka1[1],displayable_kocka1[5],displayable_kocka1[4],initPoint3d(1,0,0));
+	Side side1_6(displayable_kocka1[3],displayable_kocka1[7],displayable_kocka1[6],displayable_kocka1[2],initPoint3d(1,0,0));
 
-	Side side2_1(displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[1]);
-	Side side2_2(displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[4]);
-	Side side2_3(displayable_kocka2[4],displayable_kocka2[7],displayable_kocka2[6],displayable_kocka2[5]);
-	Side side2_4(displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5]);
-	Side side2_5(displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4]);
-	Side side2_6(displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[7]);
+	Side side2_1(displayable_kocka2[0],displayable_kocka2[3],displayable_kocka2[2],displayable_kocka2[1],initPoint3d(0,1,0));
+	Side side2_2(displayable_kocka2[0],displayable_kocka2[4],displayable_kocka2[7],displayable_kocka2[3],initPoint3d(0,1,0));
+	Side side2_3(displayable_kocka2[4],displayable_kocka2[5],displayable_kocka2[6],displayable_kocka2[7],initPoint3d(0,1,0));
+	Side side2_4(displayable_kocka2[1],displayable_kocka2[2],displayable_kocka2[6],displayable_kocka2[5],initPoint3d(0,1,0));
+	Side side2_5(displayable_kocka2[0],displayable_kocka2[1],displayable_kocka2[5],displayable_kocka2[4],initPoint3d(0,1,0));
+	Side side2_6(displayable_kocka2[3],displayable_kocka2[7],displayable_kocka2[6],displayable_kocka2[2],initPoint3d(0,1,0));
 
-	Side side3_1(displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[1]);
-	Side side3_2(displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[4]);
-	Side side3_3(displayable_kocka3[4],displayable_kocka3[7],displayable_kocka3[6],displayable_kocka3[5]);
-	Side side3_4(displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5]);
-	Side side3_5(displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4]);
-	Side side3_6(displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[7]);
+	Side side3_1(displayable_kocka3[0],displayable_kocka3[3],displayable_kocka3[2],displayable_kocka3[1],initPoint3d(1,0,1));
+	Side side3_2(displayable_kocka3[0],displayable_kocka3[4],displayable_kocka3[7],displayable_kocka3[3],initPoint3d(1,0,1));
+	Side side3_3(displayable_kocka3[4],displayable_kocka3[5],displayable_kocka3[6],displayable_kocka3[7],initPoint3d(1,0,1));
+	Side side3_4(displayable_kocka3[1],displayable_kocka3[2],displayable_kocka3[6],displayable_kocka3[5],initPoint3d(1,0,1));
+	Side side3_5(displayable_kocka3[0],displayable_kocka3[1],displayable_kocka3[5],displayable_kocka3[4],initPoint3d(1,0,1));
+	Side side3_6(displayable_kocka3[3],displayable_kocka3[7],displayable_kocka3[6],displayable_kocka3[2],initPoint3d(1,0,1));
 
-	Side side4_1(displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[1]);
-	Side side4_2(displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[4]);
-	Side side4_3(displayable_kocka4[4],displayable_kocka4[7],displayable_kocka4[6],displayable_kocka4[5]);
-	Side side4_4(displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5]);
-	Side side4_5(displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4]);
-	Side side4_6(displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[7]);
+	Side side4_1(displayable_kocka4[0],displayable_kocka4[3],displayable_kocka4[2],displayable_kocka4[1],initPoint3d(0,0,1));
+	Side side4_2(displayable_kocka4[0],displayable_kocka4[4],displayable_kocka4[7],displayable_kocka4[3],initPoint3d(0,0,1));
+	Side side4_3(displayable_kocka4[4],displayable_kocka4[5],displayable_kocka4[6],displayable_kocka4[7],initPoint3d(0,0,1));
+	Side side4_4(displayable_kocka4[1],displayable_kocka4[2],displayable_kocka4[6],displayable_kocka4[5],initPoint3d(0,0,1));
+	Side side4_5(displayable_kocka4[0],displayable_kocka4[1],displayable_kocka4[5],displayable_kocka4[4],initPoint3d(0,0,1));
+	Side side4_6(displayable_kocka4[3],displayable_kocka4[7],displayable_kocka4[6],displayable_kocka4[2],initPoint3d(0,0,1));
 
-	Side side5_1(displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[1]);
-	Side side5_2(displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[4]);
-	Side side5_3(displayable_kocka5[4],displayable_kocka5[7],displayable_kocka5[6],displayable_kocka5[5]);
-	Side side5_4(displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5]);
-	Side side5_5(displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4]);
-	Side side5_6(displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[7]);
+	Side side5_1(displayable_kocka5[0],displayable_kocka5[3],displayable_kocka5[2],displayable_kocka5[1],initPoint3d(1,1,0));
+	Side side5_2(displayable_kocka5[0],displayable_kocka5[4],displayable_kocka5[7],displayable_kocka5[3],initPoint3d(1,1,0));
+	Side side5_3(displayable_kocka5[4],displayable_kocka5[5],displayable_kocka5[6],displayable_kocka5[7],initPoint3d(1,1,0));
+	Side side5_4(displayable_kocka5[1],displayable_kocka5[2],displayable_kocka5[6],displayable_kocka5[5],initPoint3d(1,1,0));
+	Side side5_5(displayable_kocka5[0],displayable_kocka5[1],displayable_kocka5[5],displayable_kocka5[4],initPoint3d(1,1,0));
+	Side side5_6(displayable_kocka5[3],displayable_kocka5[7],displayable_kocka5[6],displayable_kocka5[2],initPoint3d(1,1,0));
 
-	Side side6_1(displayable_kocka6[0],displayable_kocka6[3],displayable_kocka6[2],displayable_kocka6[1]);
-	Side side6_2(displayable_kocka6[0],displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[4]);
-	Side side6_3(displayable_kocka6[4],displayable_kocka6[7],displayable_kocka6[6],displayable_kocka6[5]);
-	Side side6_4(displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5]);
-	Side side6_5(displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4]);
-	Side side6_6(displayable_kocka6[3],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[7]);
+	Side side6_1(displayable_kocka6[0],displayable_kocka6[3],displayable_kocka6[2],displayable_kocka6[1],initPoint3d(0,1,1));
+	Side side6_2(displayable_kocka6[0],displayable_kocka6[4],displayable_kocka6[7],displayable_kocka6[3],initPoint3d(0,1,1));
+	Side side6_3(displayable_kocka6[4],displayable_kocka6[5],displayable_kocka6[6],displayable_kocka6[7],initPoint3d(0,1,1));
+	Side side6_4(displayable_kocka6[1],displayable_kocka6[2],displayable_kocka6[6],displayable_kocka6[5],initPoint3d(0,1,1));
+	Side side6_5(displayable_kocka6[0],displayable_kocka6[1],displayable_kocka6[5],displayable_kocka6[4],initPoint3d(0,1,1));
+	Side side6_6(displayable_kocka6[3],displayable_kocka6[7],displayable_kocka6[6],displayable_kocka6[2],initPoint3d(0,1,1));
 
-	Side side7_1(displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[1]);
-	Side side7_2(displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[4]);
-	Side side7_3(displayable_kocka7[4],displayable_kocka7[7],displayable_kocka7[6],displayable_kocka7[5]);
-	Side side7_4(displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5]);
-	Side side7_5(displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4]);
-	Side side7_6(displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[7]);
+	Side side7_1(displayable_kocka7[0],displayable_kocka7[3],displayable_kocka7[2],displayable_kocka7[1],initPoint3d(1,0.4,0.4));
+	Side side7_2(displayable_kocka7[0],displayable_kocka7[4],displayable_kocka7[7],displayable_kocka7[3],initPoint3d(1,0.4,0.4));
+	Side side7_3(displayable_kocka7[4],displayable_kocka7[5],displayable_kocka7[6],displayable_kocka7[7],initPoint3d(1,0.4,0.4));
+	Side side7_4(displayable_kocka7[1],displayable_kocka7[2],displayable_kocka7[6],displayable_kocka7[5],initPoint3d(1,0.4,0.4));
+	Side side7_5(displayable_kocka7[0],displayable_kocka7[1],displayable_kocka7[5],displayable_kocka7[4],initPoint3d(1,0.4,0.4));
+	Side side7_6(displayable_kocka7[3],displayable_kocka7[7],displayable_kocka7[6],displayable_kocka7[2],initPoint3d(1,0.4,0.4));
 	
 	std::vector<Side> allSide;
 	//elso 
@@ -428,32 +430,37 @@ void Display(){
 	allSide.push_back(side7_5);
 	allSide.push_back(side7_6);
 
-
-	for(auto it = allSide.begin();it != allSide.end();  ){
-		if(YesorNo((*it))){
-			it = allSide.erase(it);
-		}
-		else{
-			it++;
-		}
-	}
+	std::remove_if(allSide.begin(),allSide.end(),YesorNo);
 	
 	std::sort( allSide.begin(), allSide.end(), is_further);  
 
+	for(auto it=allSide.begin(); it!=allSide.end(); it++){
+		for(GLint i=0 ; i<4 ; i++){
+			(*it).tomb[i]=transzform(temp2,(*it).tomb[i]);
+			
+		}
+	}
+
 	glColor3f(0.6,0.0,0.0);
 
-	for( auto it =allSide.begin() ; it != allSide.end(); it++){
-
+	for( auto it = allSide.begin() ; it != allSide.end(); it++){
+		glColor3f((*it).asd.x,(*it).asd.y,(*it).asd.z);
 		glBegin(GL_POLYGON);
+		for(GLint i=0;i<4;i++){
+			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
+		}
+		glEnd();
+			glColor3f((*it).asd.x/3,(*it).asd.y/3,(*it).asd.z/3);
+		glBegin(GL_LINE_LOOP);
 		for(GLint i=0;i<4;i++){
 			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
 		}
 		glEnd();
 	}
 
-	glColor3f(1.0,0.0,0.0);
+	
 
-	for( auto it =allSide.begin() ; it != allSide.end(); it++){
+	/*for( auto it =allSide.begin() ; it != allSide.end(); it++){
 		
 		glBegin(GL_LINE_LOOP);
 		for(GLint i=0;i<4;i++){
@@ -461,7 +468,7 @@ void Display(){
 		}
 		glEnd();
 
-	}
+	}*/
 	/*glColor3f(0.6,0.0,0.0);
 	//elso kocka elso oldal
 	glBegin(GL_POLYGON);
