@@ -16,15 +16,15 @@ class Side{
 public:
 
 	POINT3DH tomb[4];
-	POINT3D asd;
+	POINT3D szin;
 
-	Side(POINT3DH a,POINT3DH b,POINT3DH c,POINT3DH d, POINT3D asd){
+	Side(POINT3DH a,POINT3DH b,POINT3DH c,POINT3DH d, POINT3D szin){
 		
 		this->tomb[0]=a;
 		this->tomb[1]=b;
 		this->tomb[2]=c;
 		this->tomb[3]=d;
-		this->asd=asd;
+		this->szin=szin;
 
 
 	}
@@ -444,13 +444,13 @@ void Display(){
 	glColor3f(0.6,0.0,0.0);
 
 	for( auto it = allSide.begin() ; it != allSide.end(); it++){
-		glColor3f((*it).asd.x,(*it).asd.y,(*it).asd.z);
+		glColor3f((*it).szin.x,(*it).szin.y,(*it).szin.z);
 		glBegin(GL_POLYGON);
 		for(GLint i=0;i<4;i++){
 			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
 		}
 		glEnd();
-			glColor3f((*it).asd.x/3,(*it).asd.y/3,(*it).asd.z/3);
+			glColor3f((*it).szin.x/3,(*it).szin.y/3,(*it).szin.z/3);
 		glBegin(GL_LINE_LOOP);
 		for(GLint i=0;i<4;i++){
 			glVertex2d((*it).tomb[i].x/(*it).tomb[i].h,(*it).tomb[i].y/(*it).tomb[i].h);
