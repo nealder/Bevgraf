@@ -280,11 +280,11 @@ bool is_further(Side qwe, Side asd){
 	POINT3D A=Sidemidp(asd);
 	POINT3D Qv=initPoint3d(0-Q.x,0-Q.y,0-Q.z);
 	POINT3D Av=initPoint3d(0-A.x,0-A.y,0-A.z);
-
-	//POINT3D Q=initPoint3d(0-Sidemidp(qwe).x,0-Sidemidp(qwe).y,0-Sidemidp(qwe).z);
-	//POINT3D A=initPoint3d(0-Sidemidp(asd).x,0-Sidemidp(asd).y,0-Sidemidp(asd).z);
 	GLdouble qv=sqrt(belsoszorzat(Qv,Qv));
 	GLdouble av=sqrt(belsoszorzat(Av,Av));
+
+	//std::cout << "qv = " << qv << std::endl << "av = " << av << std::endl;
+
 	return (qv < av);
 }
 
@@ -297,12 +297,12 @@ bool YesorNo(Side Q){
 	//POINT3D ASxAD=vektmul(AS,AD);
 	tmp=belsoszorzat( normalvektor(Q), W);
 
+	std::cout<< " Q0.x = " << Q.tomb[0].x << " Q0.y = " << Q.tomb[0].y << " Q0.z = " << Q.tomb[0].z << std::endl;
+
 	return (tmp < 0);
 }
 
 void Display(){
-
-
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0,0.0,0.0);
@@ -462,9 +462,9 @@ void Display(){
 		glEnd();
 
 	}
-
+	/*glColor3f(0.6,0.0,0.0);
 	//elso kocka elso oldal
-	/*glBegin(GL_POLYGON);
+	glBegin(GL_POLYGON);
 	for(GLint i=0;i<4;i++){
 		glVertex2d(side1_1.tomb[i].x/side1_1.tomb[i].h,side1_1.tomb[i].y/side1_1.tomb[i].h);
 	}
@@ -590,7 +590,7 @@ void Display(){
 		glVertex2d(side3_6.tomb[i].x/side3_6.tomb[i].h,side3_6.tomb[i].y/side3_6.tomb[i].h);
 	}
 	glEnd();
-	glColor3f(0.0,0.0,0.0);
+	glColor3f(0.6,0.6,0.6);
 	//4 kocka elso oldal
 	glBegin(GL_POLYGON);
 	for(GLint i=0;i<4;i++){
@@ -1058,7 +1058,7 @@ void Display(){
 	glEnd();*/
 
 	
-
+	glutPostRedisplay();
 	glutSwapBuffers();
 }
 
